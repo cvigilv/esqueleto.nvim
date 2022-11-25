@@ -1,0 +1,8 @@
+changelog	esqueleto.txt	/*changelog*
+esqueleto	esqueleto.txt	/*esqueleto*
+esqueleto.nvim	esqueleto.txt	/*esqueleto.nvim*
+esqueleto.setup()	esqueleto.txt	/*esqueleto.setup()*
+examples	esqueleto.txt	/*examples*
+functions	esqueleto.txt	/*functions*
+premise	esqueleto.txt	/*premise*
+template-format	esqueleto.txt	/*template-format*

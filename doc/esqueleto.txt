@@ -1,0 +1,181 @@
+==============================================================================
+                                          *esqueleto.nvim* or just *esqueleto*
+
+Template files reduce boilerplate when creating a new file with some specific
+structure. A common use case for this is the shebang preamble (`#!`) and it's
+various styles or forms depending on it's intended use.
+
+|esqueleto.nvim| intends to make the use of templates or "skeletons" as easy
+and straightfoward as possible. This package adds a prompt for inserting an
+specific template when creating a new file that matches an specific file name
+or pattern.
+
+==============================================================================
+                                                                     *premise*
+
+|esqueleto| intends to provide a minimal, modular package that implements two
+main functionalities for easier use of skeleton files: (1) detection and
+prioritization of patterns and (2) managing multiple templates per pattern
+through a simple template file type (refer to |template-format| for more
+information in how to setup templates).
+
+First, |esqueleto| prioritizes matching complete file names, e.g. for template
+README.md or LICENSE.md, to later match smaller patterns like file extensions,
+e.g. adding an specific shebang or header to all Python files.
+
+Second, |esqueleto| allows the user to have different templates for an specific
+pattern, e.g. having multiple shebang templates for Python files.
+
+Note In the |examples| section some use cases are shown in order to kick-start
+your use of |esqueleto|. Please refer to this in order to understand how the 
+package works and how to make the most out of it.
+
+
+==============================================================================
+                                                             *template-format*
+
+In order for |esqueleto| to detect your templates, this have to comply with 2
+requisites:
+    1. Template files  must be inside an specific templates directory
+    (`~/.config/nvim/skeletons/` by default).
+    2. Template file names must adhere to the following naming convention:
+        For file name matching: ~
+            <exact file name>
+            e.g. README.md, LICENSE.md, .bashrc
+
+        For pattern matching: ~
+            skeleton.<pattern to match>
+            or
+            skeleton.<template type>.<pattern to match>
+
+            e.g. skeleton.sh (for default templates); skeleton.cli.sh (for CLI
+            bash templates)
+
+
+Note File name matching patterns are assigned the type `<exact file name>`,
+     while pattern matching templates are assigned the type `default` if the
+     template file name doesn't contain the template type or `<template type>`
+     if the template file name contains the template type.
+
+Note We recommend against using the template type `default` due to the
+     behaviour described above.
+
+==============================================================================
+                                                                    *examples*
+
+In order to showcase the usecase of |esqueleto|, here we showcase 3 possible,
+common use cases for templating: shebangs and README files.
+
+Shebags: ~
+    A usecase for |esqueleto| is adding the correct shebang depending in the
+    version of Python the file uses. Here we could have 3 different templates:
+
+    `skeleton.python3lastest.py:`
+>python
+    #!/usr/bin/env python3
+<
+
+    `skeleton.python36.py:`
+>python
+    #!/usr/bin/env python3.6
+<
+
+    `skeleton.python2lastest.py:`
+>python
+    #!/usr/bin/env python2
+<
+
+    Adding the pattern `*.py` to |esqueleto| will enable the insertion of any
+    of this 3 templates when creating a new `*.py` file:
+>
+    Select skeleton to use:
+    1. python36
+    2. python3lastest
+    3. python2lastest
+    Type number and <Enter> or click with mouse (q or empty to cancel):
+>
+
+README: ~
+    |esqueleto| reduces boilerplate code for files that contain a standard
+    structure, like a `README.md` file. Here we can automatically detect the
+    creation of this specific file type and prompt the insertion of the
+    template. Suppose we have the following `README.md` template in our
+    `skeletons` directory:
+
+    `README.md`
+>markdown
+    # README
+
+    Small description of proyect.
+
+    ## Table of Contents
+
+    - [Installation](#installation)
+    - [Usage](#usage)
+    - [Support](#support)
+    - [Contributing](#contributing)
+
+    ## Installation
+
+    Instalation instructions.
+
+    ```sh
+    git clone https://github.com/user/repo
+    make install
+    ```
+
+    ## Usage
+
+    Usage instructions and intention.
+
+    ## Support
+
+    Please [open an issue](https://github.com/user/repo/issues/new) for
+    support.
+
+    ## Contributing
+
+    Please contribute using [Github Flow]
+    (https://guides.github.com/introduction/flow/). Create a branch, add
+    commits, and [open a pull request](https://github.com/user/repo/compare/).
+
+    ## License
+
+    License information.
+<
+
+    Adding the pattern `README.md` to |esqueleto| will enable the insertion of
+    any of this templates when creating a new `README.md` file:
+>
+    Select skeleton to use:
+    1. default
+    Type number and <Enter> or click with mouse (q or empty to cancel):
+<
+
+==============================================================================
+                                                                   *functions*
+
+                                                           *esqueleto.setup()*
+setup({patterns}, {directory})
+
+    Setup for specific file {patterns} using the templates inside a
+    given {directory}.
+
+    Example: >
+        esqueleto.setup(
+            {
+                patterns = { "*.jl", "README.md" },
+                directory = "~/.config/nvim/skeleton/"
+            }
+        )
+<
+
+    Parameters: ~
+      • {patterns}  (table) File names or patterns to match
+      • {directory} (string) An absolute or relative path to the directory
+                    with templates.
+
+==============================================================================
+                                                                   *changelog*
+
+vim:tw=78:ts=8:et:sw=4:ft=help:norl:
