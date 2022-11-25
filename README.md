@@ -44,14 +44,12 @@ require("esqueleto").setup(
 ```
 For more information, refer to docs (`:h esqueleto`)
 
-## Support
-
-Please [open an issue](https://github.com/user/repo/issues/new) for
-support.
-
 ## Contributing
 
 Pull requests are welcomed for improvement of tool and community templates.
-Please contribute using [Github Flow]
-(https://guides.github.com/introduction/flow/). Create a branch, add
-commits, and [open a pull request](https://github.com/user/repo/compare/).
+Please contribute using [Github Flow](https://guides.github.com/introduction/flow/).
+Create a branch, add commits, and 
+[open a pull request](https://github.com/cvigilv/esqueleto.nvim/compare/).
+
+Please [open an issue](https://github.com/cvigilv/esqueleto.nvim/issues/new) for
+support.
