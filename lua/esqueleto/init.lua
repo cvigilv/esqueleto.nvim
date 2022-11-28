@@ -83,22 +83,21 @@ M.setup = function(opts)
       group = group,
       desc = "Insert skeleton",
       pattern = M._defaults.patterns,
-      -- once = true,
       callback = function()
         -- only prompt if template hasn't been inserted
-        local filename = vim.fn.expand("<amatch>")
-        if not M._template_inserted[filename] then
-          local filebase = vim.fs.basename(filename)
-          local fileextension = "*" .. filebase:match("^.+(%..+)$")
+        local filepath = vim.fn.expand("<amatch>:p")
+        local filename = vim.fn.expand("<amatch>:p:t")
+        local fileextension = "*." .. vim.fn.expand("<amatch>:e")
 
+        if not M._template_inserted[filepath] then
           -- match either filename or extension. Filename has priority
-          if vim.tbl_contains(M._defaults.patterns, filebase) then
-            M.insert(filebase)
+          if vim.tbl_contains(M._defaults.patterns, filename) then
+            M.insert(filename)
           elseif vim.tbl_contains(M._defaults.patterns, fileextension) then
             M.insert(fileextension)
           end
 
-          M._template_inserted[filename] = true
+          M._template_inserted[filepath] = true
         end
       end
     }
