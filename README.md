@@ -2,6 +2,8 @@
 
 Let a skeleton reduce your boilerplate code.
 
+<script id="asciicast-541028" src="https://asciinema.org/a/541028.js" async></script>
+
 ## What is `esqueleto`?
 
 `esqueleto.nvim` is a minimal plugin that intends to make the use of templates
