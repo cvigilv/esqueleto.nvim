@@ -23,8 +23,10 @@ M.select = function(templates)
   end
 
   local selection = nil
+  local templatenames = vim.tbl_keys(templates)
+  table.sort(templatenames, function(a, b) return a:lower() < b:lower() end)
   vim.ui.select(
-    vim.tbl_keys(templates),
+    templatenames,
     { prompt = 'Select skeleton to use:', },
     function(choice) selection = choice end
   )
@@ -51,7 +53,7 @@ M.get = function(pattern)
 
     types[_type] = template
   end
-  table.sort(types)
+
   return types
 end
 
