@@ -1,8 +1,10 @@
 # esqueleto.nvim
 
-Let a skeleton reduce your boilerplate code.
+Reduce your boilerplate code the lazy-bones way.
 
 ## What is `esqueleto`?
+
+![Preview](https://imgur.com/a/6i6JwNe)
 
 `esqueleto.nvim` is a minimal plugin that intends to make the use of templates
 or "skeletons" as easy and straightfoward as possible. This package adds a prompt
@@ -44,14 +46,11 @@ require("esqueleto").setup(
 ```
 For more information, refer to docs (`:h esqueleto`)
 
-## Example
- - [![Use the same skeleton in different paths.](https://asciinema.org/a/IHH0te0qHqqffSg55cHDHVWaN.svg)](https://asciinema.org/a/IHH0te0qHqqffSg55cHDHVWaN)
-
 ## Roadmap
 
-`esqueleto.nvim` is in its infancy. I intend on extending this plugin with some
-functionality I would like for a template manager. At some point `esqueleto.nvim` should 
-have the following (ordered by priority):
+`esqueleto.nvim` is in its infancy (therefore, expect breaking changes from time to time).
+I intend on extending this plugin with some functionality I would like for a template
+manager. At some point `esqueleto.nvim` should have the following (ordered by priority):
 
 - Cleaner template storage using Vim `ftplugin` directory style
 - Template insertion in empty files
