@@ -44,7 +44,8 @@ require("esqueleto").setup(
     }
 )
 ```
-For more information, refer to docs (`:h esqueleto`)
+For more information, refer to docs (`:h esqueleto`). For example skeleton files, check the
+[the `skeletons` folder](skeletons/).
 
 ## Roadmap
 
