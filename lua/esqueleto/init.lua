@@ -70,7 +70,7 @@ M._template_inserted = {}
 M.Esqueleto = function()
   -- only prompt if template hasn't been inserted
   local filepath = vim.fn.expand("%:p")
-  local filename = vim.fn.expand("<amatch>:p:t")
+  local filename = vim.fn.expand("%")
   local filetype = vim.bo.filetype
 
   if not M._template_inserted[filepath] then
