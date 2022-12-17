@@ -1,6 +1,7 @@
 local M = {}
 
-local function _scandir(directory, pattern)
+-- Directory scanner
+-- TODO: Add description
 M._scandir = function(directory, pattern)
   local i, t, popen = 0, {}, io.popen
   for filename in popen('ls -1 ' .. directory .. pattern):lines() do
@@ -10,13 +11,8 @@ M._scandir = function(directory, pattern)
   return t
 end
 
-M._defaults = {
-  patterns = { },
-  directory = vim.fs.normalize("~/.config/nvim/skeletons/"),
-}
-
-M._template_inserted = {}
-
+-- Template selector
+-- TODO: Add description
 M.select = function(templates)
   if templates == nil then
     vim.notify("[WARNING] No skeletons found for this file!\nPattern is known by `esqueleto` but could not find any template file")
@@ -35,9 +31,11 @@ M.select = function(templates)
   return templates[selection]
 end
 
+-- Template retriever
+-- TODO: Add description
 M.get = function(pattern)
   -- get all templates available for pattern
-  local templates = _scandir(vim.fs.normalize(M._defaults.directory), pattern)
+  local templates = M._scandir(vim.fs.normalize(M._defaults.directory), pattern)
   if vim.tbl_isempty(templates) then return nil end
 
   -- create table with template types for pattern
@@ -58,6 +56,8 @@ M.get = function(pattern)
   return types
 end
 
+-- Template inserter
+-- TODO(Carlos): Add description
 M.insert = function(pattern)
   local templates = M.get(pattern)
   local file = M.select(templates)
