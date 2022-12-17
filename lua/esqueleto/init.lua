@@ -108,26 +108,21 @@ M.setup = function(opts)
       callback = function() M.Esqueleto() end
     }
   )
+
+  vim.api.nvim_create_autocmd(
+    "BufReadPost",
+    {
+      group = group,
+      desc = "esqueleto.nvim :: Empty buffer",
       pattern = M._defaults.patterns,
       callback = function()
-        -- only prompt if template hasn't been inserted
-        local filepath = vim.fn.expand("<amatch>:p")
-        local filename = vim.fn.expand("<amatch>:p:t")
-        local fileextension = "*." .. vim.fn.expand("<amatch>:e")
-
-        if not M._template_inserted[filepath] then
-          -- match either filename or extension. Filename has priority
-          if vim.tbl_contains(M._defaults.patterns, filename) then
-            M.insert(filename)
-          elseif vim.tbl_contains(M._defaults.patterns, fileextension) then
-            M.insert(fileextension)
-          end
-
-          M._template_inserted[filepath] = true
-        end
+        local filepath = vim.fn.expand("%")
+        local emptyfile = vim.fn.getfsize(filepath) < 4
+        if emptyfile then M.Esqueleto() end
       end
     }
   )
+
   -- create ex-command for om-demand use
   vim.api.nvim_create_user_command(
     'Esqueleto',
