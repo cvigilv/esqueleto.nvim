@@ -1,6 +1,7 @@
 local M = {}
 
 local function _scandir(directory, pattern)
+M._scandir = function(directory, pattern)
   local i, t, popen = 0, {}, io.popen
   for filename in popen('ls -1 ' .. directory .. pattern):lines() do
     i = i + 1
