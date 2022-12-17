@@ -65,7 +65,7 @@ manager. At some point `esqueleto.nvim` should have the following (ordered by pr
 - Template insertion in empty files
 - On-demand template insertion
 - Template creation interface
-- Handle mmultiple template folders
+- Handle multiple template folders
 - Proyect specific templates
 - Template preview via [Telescope](https://github.com/nvim-telescope/telescope.nvim)
 - User customizable prompt and insertion rules
