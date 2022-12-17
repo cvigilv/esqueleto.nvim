@@ -18,13 +18,21 @@ Install `esqueleto.nvim` with your preferred package manager:
 [vim-plug](https://github.com/junegunn/vim-plug)
 
 ```vim
+# Stable
 Plug 'cvigilv/esqueleto.nvim'
+
+# Development (lastest)
+Plug 'cvigilv/esqueleto.nvim', { 'branch': 'develop'}
 ```
 
 [packer](https://github.com/wbthomason/packer.nvim)
 
 ```lua
+-- Stable
 use 'cvigilv/esqueleto.nvim'
+
+-- Development (lastest)
+use { 'cvigilv/esqueleto.nvim', branch = "develop" }
 ```
 
 ## Usage & configuration
