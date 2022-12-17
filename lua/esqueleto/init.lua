@@ -67,6 +67,14 @@ M.insert = function(pattern)
   end
 end
 
+-- Defaults
+M._defaults = {
+  patterns = {},
+  directory = vim.fn.stdpath("config") .. "/skeletons",
+}
+
+M._template_inserted = {}
+
 M.Esqueleto = function()
   -- only prompt if template hasn't been inserted
   local filepath = vim.fn.expand("<amatch>:p")
