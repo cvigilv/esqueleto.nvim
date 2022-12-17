@@ -42,15 +42,7 @@ M.get = function(pattern)
   local types = {}
   for _, template in pairs(templates) do
     local _file = vim.fs.basename(template)
-    local _type = vim.split(_file, ".", { plain = true, trimempty = true })[2]
-
-    if vim.tbl_contains(M._defaults.patterns, _file) then
-      _type = _file
-    elseif "*." .. _type == pattern then
-      _type = "default"
-    end
-
-    types[_type] = template
+    types[template] = M._defaults.directory .. pattern .. "/" .. _file
   end
 
   return types
@@ -77,16 +69,16 @@ M._template_inserted = {}
 
 M.Esqueleto = function()
   -- only prompt if template hasn't been inserted
-  local filepath = vim.fn.expand("<amatch>:p")
+  local filepath = vim.fn.expand("%:p")
   local filename = vim.fn.expand("<amatch>:p:t")
-  local fileextension = "*." .. vim.fn.expand("<amatch>:e")
+  local filetype = vim.bo.filetype
 
   if not M._template_inserted[filepath] then
     -- match either filename or extension. Filename has priority
     if vim.tbl_contains(M._defaults.patterns, filename) then
       M.insert(filename)
-    elseif vim.tbl_contains(M._defaults.patterns, fileextension) then
-      M.insert(fileextension)
+    elseif vim.tbl_contains(M._defaults.patterns, filetype) then
+      M.insert(filetype)
     end
 
     M._template_inserted[filepath] = true
@@ -108,20 +100,10 @@ M.setup = function(opts)
   )
 
   vim.api.nvim_create_autocmd(
-    "BufNewFile",
+    { "BufReadPost", "FileType" },
     {
       group = group,
-      desc = "esqueleto.nvim :: New buffer",
-      pattern = M._defaults.patterns,
-      callback = function() M.Esqueleto() end
-    }
-  )
-
-  vim.api.nvim_create_autocmd(
-    "BufReadPost",
-    {
-      group = group,
-      desc = "esqueleto.nvim :: Empty buffer",
+      desc = "esqueleto.nvim :: Insert template",
       pattern = M._defaults.patterns,
       callback = function()
         local filepath = vim.fn.expand("%")
