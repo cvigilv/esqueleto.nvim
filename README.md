@@ -4,7 +4,7 @@ Reduce your boilerplate code the lazy-bones way.
 
 ## What is `esqueleto`?
 
-![Preview](https://i.imgur.com/kby322l.gif)
+![Preview](https://i.imgur.com/MBMkSF7.gif)
 
 `esqueleto.nvim` is a minimal plugin that intends to make the use of templates
 or "skeletons" as easy and straightfoward as possible. This package adds a prompt
@@ -43,12 +43,12 @@ your `init.lua`:
 require("esqueleto").setup(
     {
       -- Directory where templates are stored
-      directory = "~/.config/nvim/skeletons/", --default template directory
+      directory = "~/.config/nvim/skeletons/",
 
       -- Patterns to match when creating new file
-      -- Can be either (i) file names or (ii) extension globs.
+      -- Can be either (i) file names or (ii) file types.
       -- Exact file name match have priority
-      patterns = { "README.md", "*.py" }
+      patterns = { "README.md", "python" }
     }
 )
 ```
@@ -61,9 +61,6 @@ For more information, refer to docs (`:h esqueleto`). For example skeleton files
 I intend on extending this plugin with some functionality I would like for a template
 manager. At some point `esqueleto.nvim` should have the following (ordered by priority):
 
-- Cleaner template storage using Vim `ftplugin` directory style
-- Template insertion in empty files
-- On-demand template insertion
 - Template creation interface
 - Handle multiple template folders
 - Proyect specific templates
@@ -79,3 +76,4 @@ Create a branch, add commits, and
 
 Please [open an issue](https://github.com/cvigilv/esqueleto.nvim/issues/new) for
 support.
+upport.
