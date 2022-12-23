@@ -4,7 +4,7 @@ Reduce your boilerplate code the lazy-bones way.
 
 ## What is `esqueleto`?
 
-![Preview](https://i.imgur.com/kby322l.gif)
+![Preview](https://i.imgur.com/2b6a36C.gif)
 
 `esqueleto.nvim` is a minimal plugin that intends to make the use of templates
 or "skeletons" as easy and straightfoward as possible. This package adds a prompt
