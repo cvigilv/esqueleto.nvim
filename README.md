@@ -18,13 +18,21 @@ Install `esqueleto.nvim` with your preferred package manager:
 [vim-plug](https://github.com/junegunn/vim-plug)
 
 ```vim
+# Stable
 Plug 'cvigilv/esqueleto.nvim'
+
+# Development (lastest)
+Plug 'cvigilv/esqueleto.nvim', { 'branch': 'develop'}
 ```
 
 [packer](https://github.com/wbthomason/packer.nvim)
 
 ```lua
+-- Stable
 use 'cvigilv/esqueleto.nvim'
+
+-- Development (lastest)
+use { 'cvigilv/esqueleto.nvim', branch = "develop" }
 ```
 
 ## Usage & configuration
@@ -35,12 +43,12 @@ your `init.lua`:
 require("esqueleto").setup(
     {
       -- Directory where templates are stored
-      directory = "~/.config/nvim/skeletons/", --default template directory
+      directory = "~/.config/nvim/skeletons/",
 
       -- Patterns to match when creating new file
-      -- Can be either (i) file names or (ii) extension globs.
+      -- Can be either (i) file names or (ii) file types.
       -- Exact file name match have priority
-      patterns = { "README.md", "*.py" }
+      patterns = { "README.md", "python" }
     }
 )
 ```
@@ -53,11 +61,8 @@ For more information, refer to docs (`:h esqueleto`). For example skeleton files
 I intend on extending this plugin with some functionality I would like for a template
 manager. At some point `esqueleto.nvim` should have the following (ordered by priority):
 
-- Cleaner template storage using Vim `ftplugin` directory style
-- Template insertion in empty files
-- On-demand template insertion
 - Template creation interface
-- Handle mmultiple template folders
+- Handle multiple template folders
 - Proyect specific templates
 - Template preview via [Telescope](https://github.com/nvim-telescope/telescope.nvim)
 - User customizable prompt and insertion rules
@@ -71,3 +76,4 @@ Create a branch, add commits, and
 
 Please [open an issue](https://github.com/cvigilv/esqueleto.nvim/issues/new) for
 support.
+upport.
