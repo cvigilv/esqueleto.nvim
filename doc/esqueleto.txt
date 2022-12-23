@@ -8,149 +8,102 @@ various styles or forms depending on it's intended use.
 |esqueleto.nvim| intends to make the use of templates or "skeletons" as easy
 and straightfoward as possible. This package adds a prompt for inserting an
 specific template when creating a new file that matches an specific file name
-or pattern.
+or type.
+
 
 ==============================================================================
                                                                      *premise*
 
 |esqueleto| intends to provide a minimal, modular package that implements two
 main functionalities for easier use of skeleton files: (1) detection and
-prioritization of patterns and (2) managing multiple templates per pattern
-through a simple template file type (refer to |template-format| for more
-information in how to setup templates).
+prioritization of file patterns and (2) managing multiple templates per
+pattern through a simple template file type (refer to |setup| for more
+information in how to setup the plugin).
 
 First, |esqueleto| prioritizes matching complete file names, e.g. for template
-README.md or LICENSE.md, to later match smaller patterns like file extensions,
-e.g. adding an specific shebang or header to all Python files.
+README.md or LICENSE, to later match over filetypes, e.g. adding an specific
+shebang or header to all Python files.
 
 Second, |esqueleto| allows the user to have different templates for an specific
-pattern, e.g. having multiple shebang templates for Python files.
+pattern, e.g. having multiple licenses for `LICENSE` file type.
 
 Note In the |examples| section some use cases are shown in order to kick-start
-your use of |esqueleto|. Please refer to this in order to understand how the 
-package works and how to make the most out of it.
+     your use of |esqueleto|. Please refer to this in order to understand how
+     the package works and how to make the most out of it.
 
 
 ==============================================================================
-                                                             *template-format*
+                                                                       *setup*
 
-In order for |esqueleto| to detect your templates, this have to comply with 2
-requisites:
-    1. Template files  must be inside an specific templates directory
-    (`~/.config/nvim/skeletons/` by default).
-    2. Template file names must adhere to the following naming convention:
-        For file name matching: ~
-            <exact file name>
-            e.g. README.md, LICENSE.md, .bashrc
+To setup |esqueleto|, tow things must be done: 
+    1. Setup plugin through `init.lua`
+    2. Setup template directory
 
-        For pattern matching: ~
-            skeleton.<pattern to match>
-            or
-            skeleton.<template type>.<pattern to match>
+First, |esqueleto| setup in the `init.lua` file is as follows: >
+    require('esqueleto').setup({
+          -- Default templates directory
+          directory = '~/.config/nvim/skeleton/'
 
-            e.g. skeleton.sh (for default templates); skeleton.cli.sh (for CLI
-            bash templates)
+          -- Patterns to detect for template insetion (empty by default,
+          -- adding as an example)
+          patterns = {
+              -- File specific
+              'README.md',
+              'LICENSE',
 
+              -- File type
+              'python',
+          },
+    })
+<
+Second (and based in the setup showcased above), the following step involves
+creating the templates directory file structure. For this, one must follow this
+steps:
+    1. Create a templates directory where all templates will be stored
+    (`~/.config/nvim/skeletons/` based in the setup showcased above).
+    2. Inside the main template folder, create a subdirectory for each pattern
+    detected by |esqueleto| (`README.md`, `LICENSE` and `python` based
+    in the setup showcased above).
+    3. Add the template files for each pattern to the corresponding
+    subdirectories we just created.
 
-Note File name matching patterns are assigned the type `<exact file name>`,
-     while pattern matching templates are assigned the type `default` if the
-     template file name doesn't contain the template type or `<template type>`
-     if the template file name contains the template type.
-
-Note We recommend against using the template type `default` due to the
-     behaviour described above.
+Based in the example seen above, the tree structure of our template directory
+should be: >
+    ~/.config/nvim/skeleton/
+    ├── LICENSE
+    ├── README.md
+    └── python
+<
+Note In order to see what `filetype` is a specific file, one can use the
+     following ex-command: >
+     :lua print(vim.bo.filetype)
+<
 
 ==============================================================================
                                                                     *examples*
 
-In order to showcase the usecase of |esqueleto|, here we showcase 3 possible,
-common use cases for templating: shebangs and README files.
+In order to showcase the usecase of |esqueleto|, here we showcase N possible,
+common use cases for templating, based in the setup showcased in the |setup|
+section:
 
-Shebags: ~
-    A usecase for |esqueleto| is adding the correct shebang depending in the
-    version of Python the file uses. Here we could have 3 different templates:
+LICENSE:~
+    Different type of licenses for different projects, add all licenses to its
+    template directory and insert easily this templates without much work
 
-    `skeleton.python3lastest.py:`
->python
-    #!/usr/bin/env python3
-<
+README.md:~
+    Theirs multiple styles of README files, some better for some project than
+    others. Therefore having a collection of this files can enable a faster
+    creation and launch of a project.
 
-    `skeleton.python36.py:`
->python
-    #!/usr/bin/env python3.6
-<
+python:~
+    Python files can be run (in Unix-like systems) as an executable. This
+    executable knows what version of Python to use thanks to the use of a
+    shebang in the first line. Templates for commonly used or project specific
+    shebangs can be created and added for insertion when creating a new file.
 
-    `skeleton.python2lastest.py:`
->python
-    #!/usr/bin/env python2
-<
+    Other use case is creating template for common usecases of this filetype,
+    like CLI applications, Python modules, test cases, etc.
 
-    Adding the pattern `*.py` to |esqueleto| will enable the insertion of any
-    of this 3 templates when creating a new `*.py` file:
->
-    Select skeleton to use:
-    1. python36
-    2. python3lastest
-    3. python2lastest
-    Type number and <Enter> or click with mouse (q or empty to cancel):
->
-
-README: ~
-    |esqueleto| reduces boilerplate code for files that contain a standard
-    structure, like a `README.md` file. Here we can automatically detect the
-    creation of this specific file type and prompt the insertion of the
-    template. Suppose we have the following `README.md` template in our
-    `skeletons` directory:
-
-    `README.md`
->markdown
-    # README
-
-    Small description of proyect.
-
-    ## Table of Contents
-
-    - [Installation](#installation)
-    - [Usage](#usage)
-    - [Support](#support)
-    - [Contributing](#contributing)
-
-    ## Installation
-
-    Instalation instructions.
-
-    ```sh
-    git clone https://github.com/user/repo
-    make install
-    ```
-
-    ## Usage
-
-    Usage instructions and intention.
-
-    ## Support
-
-    Please [open an issue](https://github.com/user/repo/issues/new) for
-    support.
-
-    ## Contributing
-
-    Please contribute using [Github Flow]
-    (https://guides.github.com/introduction/flow/). Create a branch, add
-    commits, and [open a pull request](https://github.com/user/repo/compare/).
-
-    ## License
-
-    License information.
-<
-
-    Adding the pattern `README.md` to |esqueleto| will enable the insertion of
-    any of this templates when creating a new `README.md` file:
->
-    Select skeleton to use:
-    1. default
-    Type number and <Enter> or click with mouse (q or empty to cancel):
-<
 
 ==============================================================================
                                                                    *functions*
@@ -164,8 +117,8 @@ setup({patterns}, {directory})
     Example: >
         esqueleto.setup(
             {
-                patterns = { "*.jl", "README.md" },
-                directory = "~/.config/nvim/skeleton/"
+                patterns = { 'README.md', 'python' },
+                directory = '~/.config/nvim/skeleton/'
             }
         )
 <
@@ -174,6 +127,16 @@ setup({patterns}, {directory})
       • {patterns}  (table) File names or patterns to match
       • {directory} (string) An absolute or relative path to the directory
                     with templates.
+
+==============================================================================
+                                                                 *ex-commands*
+
+                                                                   *Esqueleto*
+Esqueleto
+
+    Prompt template insertion for current file, prioritizing patterns matching
+    over file name then over file type.
+
 
 ==============================================================================
                                                                    *changelog*
