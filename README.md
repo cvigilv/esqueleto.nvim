@@ -7,8 +7,8 @@ Reduce your boilerplate code the lazy-bones way.
 ![Preview](https://i.imgur.com/MBMkSF7.gif)
 
 `esqueleto.nvim` is a minimal plugin that intends to make the use of templates
-or "skeletons" as easy and straightfoward as possible. This package adds a prompt
-for inserting an specific template when creating a new file that matches an specific
+or "skeletons" as easy and straightforward as possible. This package adds a prompt
+for inserting a specific template when creating a new file that matches a specific
 file name or pattern.
 
 ## Installation
@@ -21,7 +21,7 @@ Install `esqueleto.nvim` with your preferred package manager:
 # Stable
 Plug 'cvigilv/esqueleto.nvim'
 
-# Development (lastest)
+# Development (latest)
 Plug 'cvigilv/esqueleto.nvim', { 'branch': 'develop'}
 ```
 
@@ -31,7 +31,7 @@ Plug 'cvigilv/esqueleto.nvim', { 'branch': 'develop'}
 -- Stable
 use 'cvigilv/esqueleto.nvim'
 
--- Development (lastest)
+-- Development (latest)
 use { 'cvigilv/esqueleto.nvim', branch = "develop" }
 ```
 
@@ -52,8 +52,8 @@ require("esqueleto").setup(
     }
 )
 ```
-For more information, refer to docs (`:h esqueleto`). For example skeleton files, check the
-[the `skeletons` folder](skeletons/).
+For more information, refer to docs (`:h esqueleto`). For example skeleton files,
+check [the `skeletons` folder](skeletons/).
 
 ## Roadmap
 
@@ -63,17 +63,16 @@ manager. At some point `esqueleto.nvim` should have the following (ordered by pr
 
 - Template creation interface
 - Handle multiple template folders
-- Proyect specific templates
+- Project specific templates
 - Template preview via [Telescope](https://github.com/nvim-telescope/telescope.nvim)
 - User customizable prompt and insertion rules
 
 ## Contributing
 
 Pull requests are welcomed for improvement of tool and community templates.
-Please contribute using [Github Flow](https://guides.github.com/introduction/flow/).
-Create a branch, add commits, and 
+Please contribute using [GitHub Flow](https://guides.github.com/introduction/flow/).
+Create a branch, add commits, and
 [open a pull request](https://github.com/cvigilv/esqueleto.nvim/compare/).
 
 Please [open an issue](https://github.com/cvigilv/esqueleto.nvim/issues/new) for
 support.
-upport.
