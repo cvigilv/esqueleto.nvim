@@ -127,10 +127,22 @@ M.setup = function(opts)
     }
   )
 
-  -- create ex-command for om-demand use
+  -- create ex-command for on-demand use
   vim.api.nvim_create_user_command(
     'Esqueleto',
-    function() M.Esqueleto() end,
+    function()
+      local filename = vim.fn.expand("%:t")
+      local filetype = vim.bo.filetype
+
+      -- match either filename or extension. Filename has priority
+      if vim.tbl_contains(M._defaults.patterns, filename) then
+        M.insert(filename)
+      elseif vim.tbl_contains(M._defaults.patterns, filetype) then
+        M.insert(filetype)
+      end
+    end,
+    {}
+  )
     {}
   )
 end
