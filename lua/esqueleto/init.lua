@@ -3,10 +3,11 @@ local M = {}
 -- Directory scanner
 -- TODO: Add description
 M._scandir = function(directory, pattern)
-  local i, t, popen = 0, {}, io.popen
-  for filename in popen('ls -1 ' .. directory .. pattern):lines() do
+  local i = 0
+  local t = {}
+  for filepath in vim.fs.dir(directory .. pattern) do
     i = i + 1
-    t[i] = filename
+    t[i] = filepath
   end
   return t
 end
