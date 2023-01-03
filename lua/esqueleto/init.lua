@@ -34,25 +34,38 @@ end
 
 -- Template retriever
 -- TODO: Add description
-M.get = function(pattern)
-  -- get all templates available for pattern
-  local templates = M._scandir(vim.fs.normalize(M._defaults.directory), pattern)
-  if vim.tbl_isempty(templates) then return nil end
+M.get = function(pattern, alldirectories)
+  local templates = {}
 
-  -- create table with template types for pattern
-  local types = {}
-  for _, template in pairs(templates) do
-    local _file = vim.fs.basename(template)
-    types[template] = M._defaults.directory .. pattern .. "/" .. _file
+  -- Count directories that contain templates for pattern
+  local ndirs = 0
+  for _, directory in pairs(alldirectories) do
+    directory = vim.fn.fnamemodify(directory, ':p') -- expand path
+    ndirs = ndirs + vim.fn.isdirectory(directory .. pattern .. '/')
   end
 
-  return types
+  -- Get templates for pattern
+  for _, directory in ipairs(alldirectories) do
+    directory = vim.fn.fnamemodify(directory, ':p') -- expand path
+    if vim.fn.isdirectory(directory .. pattern .. '/') == 1 then
+      for filepath in vim.fs.dir(directory .. pattern .. '/') do
+        filepath = directory .. filepath
+        local name = vim.fs.basename(filepath)
+        if ndirs > 1 then
+          name = vim.fn.simplify(directory) .. " :: " .. name
+        end
+        templates[name] = filepath
+      end
+    end
+  end
+
+  return templates
 end
 
 -- Template inserter
 -- TODO(Carlos): Add description
 M.insert = function(pattern)
-  local templates = M.get(pattern)
+  local templates = M.get(pattern, M._defaults.directories)
   local file = M.select(templates)
 
   if file ~= nil then
@@ -63,7 +76,7 @@ end
 -- Defaults
 M._defaults = {
   patterns = {},
-  directory = vim.fn.stdpath("config") .. "/skeletons",
+  directories = {vim.fn.stdpath("config") .. "/skeletons"},
 }
 
 M._template_inserted = {}
