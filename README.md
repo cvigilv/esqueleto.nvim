@@ -43,7 +43,7 @@ your `init.lua`:
 require("esqueleto").setup(
     {
       -- Directory where templates are stored
-      directory = "~/.config/nvim/skeletons/",
+      directories = {"~/.config/nvim/skeletons/"}
 
       -- Patterns to match when creating new file
       -- Can be either (i) file names or (ii) file types.
@@ -55,6 +55,14 @@ require("esqueleto").setup(
 For more information, refer to docs (`:h esqueleto`). For example skeleton files,
 check [the `skeletons` folder](skeletons/).
 
+The default options of `esqueleto` are
+~~~lua
+    {
+      directories = { vim.fn.stdpath("config") .. "/skeletons" },
+      patterns = { }
+    }
+~~~
+
 ## Roadmap
 
 `esqueleto.nvim` is in its infancy (therefore, expect breaking changes from time to time).
@@ -62,7 +70,6 @@ I intend on extending this plugin with some functionality I would like for a tem
 manager. At some point `esqueleto.nvim` should have the following (ordered by priority):
 
 - Template creation interface
-- Handle multiple template folders
 - Project specific templates
 - Template preview via [Telescope](https://github.com/nvim-telescope/telescope.nvim)
 - User customizable prompt and insertion rules
