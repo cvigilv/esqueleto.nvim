@@ -49,7 +49,7 @@ M.get = function(pattern, alldirectories)
     directory = vim.fn.fnamemodify(directory, ':p') -- expand path
     if vim.fn.isdirectory(directory .. pattern .. '/') == 1 then
       for filepath in vim.fs.dir(directory .. pattern .. '/') do
-        filepath = directory .. filepath
+        filepath = directory .. pattern .. "/" .. filepath
         local name = vim.fs.basename(filepath)
         if ndirs > 1 then
           name = vim.fn.simplify(directory) .. " :: " .. name
