@@ -35,13 +35,13 @@ Note In the |examples| section some use cases are shown in order to kick-start
 ==============================================================================
                                                                        *setup*
 
-To setup |esqueleto|, tow things must be done: 
+To setup |esqueleto|, tow things must be done:
     1. Setup plugin through `init.lua`
     2. Setup template directory
 
 First, |esqueleto| setup in the `init.lua` file is as follows: >
     require('esqueleto').setup({
-          -- Default templates directory
+          -- Templates directories
           directories = { '~/.config/nvim/skeleton/' },
 
           -- Patterns to detect for template insetion (empty by default,
@@ -54,6 +54,9 @@ First, |esqueleto| setup in the `init.lua` file is as follows: >
               -- File type
               'python',
           },
+
+          -- Selection prompt to use
+          prompt = 'default',
     })
 <
 Second (and based in the setup showcased above), the following step involves
@@ -91,8 +94,8 @@ LICENSE:~
     template directory and insert easily this templates without much work
 
 README.md:~
-    Theirs multiple styles of README files, some better for some project than
-    others. Therefore having a collection of this files can enable a faster
+    There are multiple styles of README files, some better for some project
+    than others. Therefore having a collection of this files can enable a faster
     creation and launch of a project.
 
 python:~
@@ -119,6 +122,7 @@ setup({patterns}, {directory})
             {
                 directories = {vim.fn.stdpath("config") .. "/skeletons"},
                 patterns = { },
+                prompt = 'default',
             }
         )
 <
@@ -127,6 +131,34 @@ setup({patterns}, {directory})
       • {patterns}  (table) File names or patterns to match
       • {directory} (string) An absolute or relative path to the directory
                     with templates.
+      • {prompt}    (string) Selection prompt to use, can be any of `default`
+                    or `ivy`. For more information, refer to the |ui|.
+
+==============================================================================
+                                                                          *ui*
+
+|esqueleto| comes built-in with two different selection prompt options:
+
+1. `default`, a command-line-based selection prompt that only shows the
+   available templates for the given file.
+2. `ivy`, a fancy, 2-pane selection prompt inspired in Emacs' Ivy selection
+   minibuffer. This selection prompt has the following layout:
+
+    ┌────────────────────────┐
+    │                        │ -> Template contents will be shown here,
+    │                        │      making use of your current Neovim
+    │                        │      configuration (highlighing, filetype
+    │      Preview pane      │      settings, UI plugins, LSP, etc.)
+    │                        │
+    │                        │ -> Keymaps are 'q' to quit, '<CR>' to accept
+    │                        │
+    ├────────────────────────┤
+    │                        │ -> Available templates and their source files
+    │     Selection pane     │      will be shown here. Placing cursor on a
+    │                        │      of template identifier will preview it.
+    └────────────────────────┘
+
+==============================================================================
 
 ==============================================================================
                                                                  *ex-commands*
@@ -139,6 +171,5 @@ Esqueleto
 
 
 ==============================================================================
-                                                                   *changelog*
 
 vim:tw=78:ts=8:et:sw=4:ft=help:norl:
