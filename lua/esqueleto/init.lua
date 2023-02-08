@@ -47,7 +47,7 @@ end
 M._defaults = {
   patterns = {},
   directories = {vim.fn.stdpath("config") .. "/skeletons"},
-  prompt = "ivy",
+  prompt = "default",
 }
 
 M._template_inserted = {}
