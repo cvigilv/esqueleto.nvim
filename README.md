@@ -19,36 +19,37 @@ Install `esqueleto.nvim` with your preferred package manager:
 
 ```vim
 # Stable
-Plug 'cvigilv/esqueleto.nvim'
+Plug 'cvigilv/esqueleto.nvim', { 'tag': '*' }
 
 # Development (latest)
-Plug 'cvigilv/esqueleto.nvim', { 'branch': 'develop'}
+Plug 'cvigilv/esqueleto.nvim'
 ```
 
 [packer](https://github.com/wbthomason/packer.nvim)
 
 ```lua
 -- Stable
-use 'cvigilv/esqueleto.nvim'
+use { 'cvigilv/esqueleto.nvim', tag = "*" }
 
 -- Development (latest)
-use { 'cvigilv/esqueleto.nvim', branch = "develop" }
+use 'cvigilv/esqueleto.nvim'
 ```
 
 ## Usage & configuration
 
-In order to configure `esqueleto.nvim` and use it, the following should be present in
+In order to configure `esqueleto.nvim` and make use of it, the following should be present in
 your `init.lua`:
 ```lua
 require("esqueleto").setup(
     {
       -- Directory where templates are stored
-      directories = {"~/.config/nvim/skeletons/"}
+      directories = {"~/.config/nvim/skeletons/"},
 
       -- Patterns to match when creating new file
       -- Can be either (i) file names or (ii) file types.
       -- Exact file name match have priority
-      patterns = { "README.md", "python" }
+      patterns = { "README.md", "python" },
+      prompt = "default",
     }
 )
 ```
@@ -59,7 +60,8 @@ The default options of `esqueleto` are
 ~~~lua
     {
       directories = { vim.fn.stdpath("config") .. "/skeletons" },
-      patterns = { }
+      patterns = {},
+      prompt = "default",
     }
 ~~~
 
@@ -71,7 +73,7 @@ manager. At some point `esqueleto.nvim` should have the following (ordered by pr
 
 - Template creation interface
 - Project specific templates
-- Template preview via [Telescope](https://github.com/nvim-telescope/telescope.nvim)
+- ~~Template preview via [Telescope](https://github.com/nvim-telescope/telescope.nvim)~~
 - User customizable prompt and insertion rules
 
 ## Contributing
