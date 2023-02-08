@@ -1,36 +1,6 @@
+local ui = require('esqueleto.ui')
+
 local M = {}
-
--- Directory scanner
--- TODO: Add description
-M._scandir = function(directory, pattern)
-  local i = 0
-  local t = {}
-  for filepath in vim.fs.dir(directory .. pattern) do
-    i = i + 1
-    t[i] = filepath
-  end
-  return t
-end
-
--- Template selector
--- TODO: Add description
-M.select = function(templates)
-  if templates == nil then
-    vim.notify("[WARNING] No skeletons found for this file!\nPattern is known by `esqueleto` but could not find any template file")
-    return nil
-  end
-
-  local selection = nil
-  local templatenames = vim.tbl_keys(templates)
-  table.sort(templatenames, function(a, b) return a:lower() < b:lower() end)
-  vim.ui.select(
-    templatenames,
-    { prompt = 'Select skeleton to use:', },
-    function(choice) selection = choice end
-  )
-
-  return templates[selection]
-end
 
 -- Template retriever
 -- TODO: Add description
@@ -64,9 +34,9 @@ end
 
 -- Template inserter
 -- TODO(Carlos): Add description
-M.insert = function(pattern)
-  local templates = M.get(pattern, M._defaults.directories)
-  local file = M.select(templates)
+M.insert = function(pattern, options)
+  local templates = M.get(pattern, options.directories)
+  local file = ui.select(templates, options)
 
   if file ~= nil then
     vim.cmd("0r " .. file)
@@ -77,11 +47,12 @@ end
 M._defaults = {
   patterns = {},
   directories = {vim.fn.stdpath("config") .. "/skeletons"},
+  prompt = "default",
 }
 
 M._template_inserted = {}
 
-M.Esqueleto = function()
+M.Esqueleto = function(opts)
   -- only prompt if template hasn't been inserted
   local filepath = vim.fn.expand("%:p")
   local filename = vim.fn.expand("%:t")
@@ -89,10 +60,10 @@ M.Esqueleto = function()
 
   if not M._template_inserted[filepath] then
     -- match either filename or extension. Filename has priority
-    if vim.tbl_contains(M._defaults.patterns, filename) then
-      M.insert(filename)
-    elseif vim.tbl_contains(M._defaults.patterns, filetype) then
-      M.insert(filetype)
+    if vim.tbl_contains(opts.patterns, filename) then
+      M.insert(filename, opts)
+    elseif vim.tbl_contains(opts.patterns, filetype) then
+      M.insert(filetype, opts)
     end
 
     M._template_inserted[filepath] = true
@@ -122,7 +93,7 @@ M.setup = function(opts)
       callback = function()
         local filepath = vim.fn.expand("%")
         local emptyfile = vim.fn.getfsize(filepath) < 4
-        if emptyfile then M.Esqueleto() end
+        if emptyfile then M.Esqueleto(M._defaults) end
       end
     }
   )
@@ -130,7 +101,7 @@ M.setup = function(opts)
   -- create ex-command for om-demand use
   vim.api.nvim_create_user_command(
     'Esqueleto',
-    function() M.Esqueleto() end,
+    function() M.Esqueleto(M._defaults) end,
     {}
   )
 end
