@@ -12,6 +12,11 @@ M._scandir = function(directory, pattern)
   return t
 end
 
+-- Template writer
+M.write = function (file)
+  vim.cmd("0r " .. file)
+end
+
 -- Template selector
 -- TODO: Add description
 M.select = function(templates)
@@ -26,10 +31,13 @@ M.select = function(templates)
   vim.ui.select(
     templatenames,
     { prompt = 'Select skeleton to use:', },
-    function(choice) selection = choice end
+    function(choice) 
+      local file = templates[choice]
+      if  file ~= nil then
+        M.write(file)
+      end
+    end
   )
-
-  return templates[selection]
 end
 
 -- Template retriever
@@ -66,11 +74,7 @@ end
 -- TODO(Carlos): Add description
 M.insert = function(pattern)
   local templates = M.get(pattern, M._defaults.directories)
-  local file = M.select(templates)
-
-  if file ~= nil then
-    vim.cmd("0r " .. file)
-  end
+  M.select(templates)
 end
 
 -- Defaults
