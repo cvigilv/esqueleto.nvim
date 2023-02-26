@@ -59,10 +59,21 @@ M.ivy = function(templates)
   vim.api.nvim_buf_set_lines(selection_buf, 0, -1, false, templatenames)
   vim.bo[selection_buf].modifiable = false
 
+
   -- Setup behavior
   local augroup = vim.api.nvim_create_augroup("esqueleto.ivy", {})
+
+  local closepreview = function(selected)
+    if not selected then
+      vim.api.nvim_set_current_win(preview_win)
+      vim.cmd("normal ggdG")
+    end
+    vim.api.nvim_win_close(selection_win, true)
+    vim.api.nvim_buf_delete(selection_buf, { force = true })
+  end
+
   vim.api.nvim_create_autocmd(
-    {"CursorMoved", "CursorHold"},
+    { "CursorMoved", "CursorHold" },
     {
       group = augroup,
       desc = "esqueleto.ivy.selection.updatepreview",
@@ -87,12 +98,7 @@ M.ivy = function(templates)
   vim.keymap.set(
     'n',
     'q',
-    function()
-      vim.api.nvim_set_current_win(preview_win)
-      vim.cmd("normal ggdG")
-      vim.api.nvim_win_close(selection_win, true)
-      vim.api.nvim_buf_delete(selection_buf, { force = true })
-    end,
+    function() closepreview(false) end,
     {
       buffer = selection_buf,
       desc = "Quit 'esqueleto' selection pane without selecting a template"
@@ -101,10 +107,7 @@ M.ivy = function(templates)
   vim.keymap.set(
     'n',
     '<CR>',
-    function()
-      vim.api.nvim_win_close(selection_win, true)
-      vim.api.nvim_buf_delete(selection_buf, { force = true })
-    end,
+    function() closepreview(true) end,
     {
       buffer = selection_buf,
       desc = "Select current template"
