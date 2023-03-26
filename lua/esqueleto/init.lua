@@ -17,6 +17,12 @@ M.write = function (file)
   vim.cmd("0r " .. file)
 end
 
+M._write_file_safe = function (file)
+    if file ~= nil then
+        M.write(file)
+    end
+end
+
 -- Template selector
 -- TODO: Add description
 M.select = function(templates)
@@ -28,14 +34,18 @@ M.select = function(templates)
   local selection = nil
   local templatenames = vim.tbl_keys(templates)
   table.sort(templatenames, function(a, b) return a:lower() < b:lower() end)
+
+  -- if only one template, write and return early
+  if #templatenames == 1 then
+      M._write_file_safe(templates[templatenames[1]])
+      return
+  end
+
   vim.ui.select(
     templatenames,
     { prompt = 'Select skeleton to use:', },
-    function(choice) 
-      local file = templates[choice]
-      if  file ~= nil then
-        M.write(file)
-      end
+    function(choice)
+      M._write_file_safe(templates[choice])
     end
   )
 end
