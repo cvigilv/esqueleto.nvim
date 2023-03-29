@@ -36,11 +36,7 @@ end
 -- TODO(Carlos): Add description
 M.insert = function(pattern, options)
   local templates = M.get(pattern, options.directories)
-  local file = ui.select(templates, options)
-
-  if file ~= nil then
-    vim.cmd("0r " .. file)
-  end
+  ui.select(templates, options)
 end
 
 -- Defaults

@@ -1,5 +1,29 @@
 local M = {}
 
+-- Check if templates exist for pattern
+M.hastemplates = function(templates)
+  if next(templates) == nil then
+    vim.api.nvim_echo({{"FOO", "Normal"}}, {}, {})
+    vim.notify(
+      "[WARNING] Pattern is known by `esqueleto` but could no templates where found",
+      vim.log.levels.WARN
+    )
+    return false
+  end
+end
+
+-- Write contents of template to current buffer
+M.write = function(file)
+  if file ~= nil then
+    vim.cmd("0r " .. file)
+  else
+    vim.notify(
+      "[ERROR] `esqueleto` can't insert template from '" .. file .. "'",
+      vim.log.levels.WARN
+    )
+  end
+end
+
 -- Create new window
 local _newpane = function(old_win, ratio)
   local height = vim.api.nvim_win_get_height(old_win)
@@ -32,17 +56,13 @@ end
 
 -- Prompt 'default' selection pane
 M.default = function(templates)
-  local selection = nil
   local templatenames = vim.tbl_keys(templates)
   table.sort(templatenames, function(a, b) return a:lower() < b:lower() end)
   vim.ui.select(
     templatenames,
     { prompt = 'Select skeleton to use:', },
-    function(choice) selection = choice end
+    function(choice) M.write(templates[choice]) end
   )
-
-  return templates[selection]
-
 end
 
 -- Prompt 'ivy' selection pane
@@ -118,19 +138,13 @@ end
 -- Template selector
 -- TODO: Add description
 M.select = function(templates, options)
-  if templates == nil then
-    vim.notify("[WARNING] No skeletons found for this file!\nPattern is known by `esqueleto` but could not find any template file")
-    return nil
+  if M.hastemplates(templates) then
+    if options.prompt == "ivy" then
+      M.ivy(templates)
+    elseif options.prompt == "default" then
+      M.default(templates)
+    end
   end
-
-  local template = nil
-  if options.prompt == "ivy" then
-    template = M.ivy(templates)
-  elseif options.prompt == "default" then
-    template = M.default(templates)
-  end
-  return template
 end
-
 
 return M
