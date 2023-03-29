@@ -9,6 +9,8 @@ M.hastemplates = function(templates)
       vim.log.levels.WARN
     )
     return false
+  else
+    return true
   end
 end
 
