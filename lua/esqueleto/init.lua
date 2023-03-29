@@ -36,7 +36,7 @@ M.select = function(templates)
   table.sort(templatenames, function(a, b) return a:lower() < b:lower() end)
 
   -- if only one template, write and return early
-  if #templatenames == 1 then
+  if #templatenames == 1 and M._defaults.autouse then
       M._write_file_safe(templates[templatenames[1]])
       return
   end
@@ -91,6 +91,7 @@ end
 M._defaults = {
   patterns = {},
   directories = {vim.fn.stdpath("config") .. "/skeletons"},
+  autouse = true
 }
 
 M._template_inserted = {}
