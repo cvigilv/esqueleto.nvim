@@ -1,12 +1,10 @@
 local M = {}
 
-local utils = require('esqueleto.utils')
-
-M.createexcmd = function(opts)
+M.createexcmd = function(fn, opts)
 -- create ex-command for on-demand use
   vim.api.nvim_create_user_command(
     'Esqueleto',
-    function() utils.inserttemplate(opts) end,
+    function() fn(opts) end,
     {}
   )
 end

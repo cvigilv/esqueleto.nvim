@@ -1,30 +1,6 @@
+local utils = require('esqueleto.utils')
+
 local M = {}
-
--- Check if templates exist for pattern
-M.hastemplates = function(templates)
-  if next(templates) == nil then
-    vim.api.nvim_echo({{"FOO", "Normal"}}, {}, {})
-    vim.notify(
-      "[WARNING] Pattern is known by `esqueleto` but could no templates where found",
-      vim.log.levels.WARN
-    )
-    return false
-  else
-    return true
-  end
-end
-
--- Write contents of template to current buffer
-M.write = function(file)
-  if file ~= nil then
-    vim.cmd("0r " .. file)
-  else
-    vim.notify(
-      "[ERROR] `esqueleto` can't insert template from '" .. file .. "'",
-      vim.log.levels.WARN
-    )
-  end
-end
 
 -- Create new window
 local _newpane = function(old_win, ratio)
@@ -58,12 +34,10 @@ end
 
 -- Prompt 'default' selection pane
 M.default = function(templates)
-  local templatenames = vim.tbl_keys(templates)
-  table.sort(templatenames, function(a, b) return a:lower() < b:lower() end)
   vim.ui.select(
-    templatenames,
+    vim.tbl_keys(templates),
     { prompt = 'Select skeleton to use:', },
-    function(choice) M.write(templates[choice]) end
+    function(choice) utils.writetemplate(templates[choice]) end
   )
 end
 
@@ -137,15 +111,27 @@ M.ivy = function(templates)
   )
 end
 
--- Template selector
--- TODO: Add description
-M.select = function(templates, options)
-  if M.hastemplates(templates) then
-    if options.prompt == "ivy" then
-      M.ivy(templates)
-    elseif options.prompt == "default" then
-      M.default(templates)
-    end
+M.selecttemplate = function(templates, opts)
+  -- Check if patterns has templates from which to select
+  if not utils.hastemplates(templates) then
+    return nil
+  end
+
+  -- Alphabetically sort template names for a more pleasing experience
+  local templatenames = vim.tbl_keys(templates)
+  table.sort(templatenames, function(a, b) return a:lower() < b:lower() end)
+
+  -- If only one template, write and return early
+  if #templatenames == 1 and opts.autouse then
+    M.writetemplate(templates[templatenames[1]])
+    return nil
+  end
+
+  -- Open insertion UI
+  if opts.prompt == "ivy" then
+    M.ivy(templates)
+  elseif opts.prompt == "default" then
+    M.default(templates)
   end
 end
 
