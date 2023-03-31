@@ -36,7 +36,7 @@ M.gettemplates = function(pattern, alldirectories)
   return templates
 end
 
-M.selecttemplate = function(templates)
+M.selecttemplate = function(templates, opts)
   -- Check if templates exist
   if vim.tbl_isempty(templates) then
     vim.notify(
@@ -51,7 +51,7 @@ M.selecttemplate = function(templates)
   table.sort(templatenames, function(a, b) return a:lower() < b:lower() end)
 
   -- If only one template, write and return early
-  if #templatenames == 1 and M._defaults.autouse then
+  if #templatenames == 1 and opts.autouse then
     M.writetemplate(templates[templatenames[1]])
     return nil
   end
@@ -86,7 +86,7 @@ M.inserttemplate = function(opts)
     local templates = M.gettemplates(pattern, opts.directories)
 
     -- Pop-up selection UI
-    M.selecttemplate(templates)
+    M.selecttemplate(templates, opts)
     _G.esqueleto_inserted[filepath] = true
   end
 end
