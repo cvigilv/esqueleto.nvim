@@ -1,6 +1,6 @@
-local ui = require('esqueleto.ui')
-
 local M = {}
+
+_G.esqueleto_inserted = {}
 
 M.writetemplate = function(file)
   if file ~= nil then
@@ -66,26 +66,27 @@ end
 
 M.inserttemplate = function(opts)
   -- Get pattern alternatives for current file
-  -- local filepath = vim.fn.expand("%:p")
+  local filepath = vim.fn.expand("%:p")
   local filename = vim.fn.expand("%:t")
   local filetype = vim.bo.filetype
 
   -- Identify if pattern matches user configuration
   local pattern = nil
-  -- if not M._template_inserted[filepath] then
-  -- match either filename or extension. Filename has priority
-  if vim.tbl_contains(opts.patterns, filename) then
-    pattern = filename
-  elseif vim.tbl_contains(opts.patterns, filetype) then
-    pattern = filetype
+  if not _G.esqueleto_inserted[filepath] then
+    -- match either filename or extension. Filename has priority
+    if vim.tbl_contains(opts.patterns, filename) then
+      pattern = filename
+    elseif vim.tbl_contains(opts.patterns, filetype) then
+      pattern = filetype
+    end
+
+    -- Get templates for selected pattern
+    local templates = M.gettemplates(pattern, opts.directories)
+
+    -- Pop-up selection UI
+    M.selecttemplate(templates)
+    _G.esqueleto_inserted[filepath] = true
   end
-  -- end
-
-  -- Get templates for selected pattern
-  local templates = M.gettemplates(pattern, opts.directories)
-
-  -- Pop-up selection UI
-  M.selecttemplate(templates)
 end
 
 
