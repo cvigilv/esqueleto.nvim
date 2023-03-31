@@ -38,9 +38,11 @@ end
 
 M.selecttemplate = function(templates)
   -- Check if templates exist
-  if templates == nil then
+  if vim.tbl_isempty(templates) then
     vim.notify(
-      "[WARNING] No skeletons found for this file!\nPattern is known by `esqueleto` but could not find any template file")
+      "[WARNING] No templates found for this file! Pattern is known by `esqueleto` but could not find any template file",
+      vim.log.levels.WARN
+    )
     return nil
   end
 
