@@ -36,13 +36,21 @@ M.gettemplates = function(pattern, alldirectories)
   return templates
 end
 
-M.selecttemplate = function(templates, opts)
-  -- Check if templates exist
+M.hastemplates = function(templates)
   if vim.tbl_isempty(templates) then
     vim.notify(
-      "[WARNING] No templates found for this file! Pattern is known by `esqueleto` but could not find any template file",
+      "[WARNING] Pattern is known by `esqueleto` but could no templates where found",
       vim.log.levels.WARN
     )
+    return false
+  else
+    return true
+  end
+end
+
+M.selecttemplate = function(templates, opts)
+  -- Check if patterns has templates from which to select
+  if not M.hastemplates(templates) then
     return nil
   end
 
