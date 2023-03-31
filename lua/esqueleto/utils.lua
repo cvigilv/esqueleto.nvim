@@ -3,11 +3,6 @@ local M = {}
 M.writetemplate = function(file)
   if file ~= nil then
     vim.cmd("0r " .. file)
-  else
-    vim.notify(
-      "[ERROR] `esqueleto` can't insert template from '" .. file .. "'",
-      vim.log.levels.WARN
-    )
   end
 end
 
