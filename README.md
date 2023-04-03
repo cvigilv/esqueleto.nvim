@@ -43,12 +43,15 @@ your `init.lua`:
 require("esqueleto").setup(
     {
       -- Directory where templates are stored
-      directories = {"~/.config/nvim/skeletons/"}
+      directories = {"~/.config/nvim/skeletons/"},
 
       -- Patterns to match when creating new file
       -- Can be either (i) file names or (ii) file types.
       -- Exact file name match have priority
-      patterns = { "README.md", "python" }
+      patterns = { "README.md", "python" },
+
+      -- whether to auto-use a template if it's the only one for a filetype
+      autouse = true
     }
 )
 ```
@@ -59,7 +62,8 @@ The default options of `esqueleto` are
 ~~~lua
     {
       directories = { vim.fn.stdpath("config") .. "/skeletons" },
-      patterns = { }
+      patterns = { },
+      autouse = true
     }
 ~~~
 
