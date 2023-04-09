@@ -37,12 +37,12 @@ use { 'cvigilv/esqueleto.nvim', branch = "develop" }
 
 ## Usage & configuration
 
-In order to configure `esqueleto.nvim` and use it, the following should be present in
+To configure `esqueleto.nvim` and use it, the following should be present in
 your `init.lua`:
 ```lua
 require("esqueleto").setup(
     {
-      -- Directory where templates are stored
+      -- Template directories
       directories = {"~/.config/nvim/skeletons/"},
 
       -- Patterns to match when creating new file
@@ -50,7 +50,7 @@ require("esqueleto").setup(
       -- Exact file name match have priority
       patterns = { "README.md", "python" },
 
-      -- whether to auto-use a template if it's the only one for a filetype
+      -- whether to auto-use a template if it's the only one for a pattern
       autouse = true
     }
 )
@@ -69,7 +69,7 @@ The default options of `esqueleto` are
 
 ## Roadmap
 
-`esqueleto.nvim` is in its infancy (therefore, expect breaking changes from time to time).
+`esqueleto.nvim` is in its infancy (expect breaking changes from time to time).
 I intend on extending this plugin with some functionality I would like for a template
 manager. At some point `esqueleto.nvim` should have the following (ordered by priority):
 
