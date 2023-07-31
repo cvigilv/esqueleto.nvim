@@ -1,11 +1,19 @@
+local wildcards = require("esqueleto.wildcards")
+
 local M = {}
 
-_G.esqueleto_inserted = {}
-
-M.writetemplate = function(file)
-  if file ~= nil then
+M.writetemplate = function(file, opts)
+  if file ~= nil and not opts.wildcards.expand then
+    -- Place contents of template directly to buffer
     vim.cmd("0r " .. file)
+  elseif file ~= nil and opts.wildcards.expand then
+    -- Expand wildcards from template and place contents in buffer
+    local content = io.open(file, "r"):read("*a")
+    if content ~= nil then
+      vim.api.nvim_buf_set_lines(0, 0, -1, true, wildcards.parse(content, opts.wildcards.lookup))
+    end
   end
+  vim.cmd("norm G")
 end
 
 M.gettemplates = function(pattern, alldirectories)
@@ -14,15 +22,15 @@ M.gettemplates = function(pattern, alldirectories)
   -- Count directories that contain templates for pattern
   local ndirs = 0
   for _, directory in pairs(alldirectories) do
-    directory = vim.fn.fnamemodify(directory, ':p') -- expand path
-    ndirs = ndirs + vim.fn.isdirectory(directory .. pattern .. '/')
+    directory = vim.fn.fnamemodify(directory, ":p") -- expand path
+    ndirs = ndirs + vim.fn.isdirectory(directory .. pattern .. "/")
   end
 
   -- Get templates for pattern
   for _, directory in ipairs(alldirectories) do
-    directory = vim.fn.fnamemodify(directory, ':p') -- expand path
-    if vim.fn.isdirectory(directory .. pattern .. '/') == 1 then
-      for filepath in vim.fs.dir(directory .. pattern .. '/') do
+    directory = vim.fn.fnamemodify(directory, ":p") -- expand path
+    if vim.fn.isdirectory(directory .. pattern .. "/") == 1 then
+      for filepath in vim.fs.dir(directory .. pattern .. "/") do
         filepath = directory .. pattern .. "/" .. filepath
         local name = vim.fs.basename(filepath)
         if ndirs > 1 then
@@ -48,7 +56,9 @@ M.selecttemplate = function(templates, opts)
 
   -- Alphabetically sort template names for a more pleasing experience
   local templatenames = vim.tbl_keys(templates)
-  table.sort(templatenames, function(a, b) return a:lower() < b:lower() end)
+  table.sort(templatenames, function(a, b)
+    return a:lower() < b:lower()
+  end)
 
   -- If only one template, write and return early
   if #templatenames == 1 and opts.autouse then
@@ -57,13 +67,9 @@ M.selecttemplate = function(templates, opts)
   end
 
   -- Select template
-  vim.ui.select(
-    templatenames,
-    { prompt = 'Select skeleton to use:', },
-    function(choice)
-      M.writetemplate(templates[choice])
-    end
-  )
+  vim.ui.select(templatenames, { prompt = "Select skeleton to use:" }, function(choice)
+    M.writetemplate(templates[choice], opts)
+  end)
 end
 
 M.inserttemplate = function(opts)
@@ -90,6 +96,5 @@ M.inserttemplate = function(opts)
     _G.esqueleto_inserted[filepath] = true
   end
 end
-
 
 return M
