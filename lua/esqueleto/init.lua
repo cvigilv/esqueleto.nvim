@@ -1,3 +1,5 @@
+_G.esqueleto_inserted = {}
+
 local autocmd = require('esqueleto.autocmd')
 local excmd = require('esqueleto.excmd')
 local config = require('esqueleto.config')
