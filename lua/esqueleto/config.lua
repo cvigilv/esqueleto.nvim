@@ -19,6 +19,10 @@ M.default_config = {
   wildcards = {
     expand = true,
     lookup = {
+      -- File
+      ["filename"] = vim.fn.expand("%:t:r"),
+      ["filepath"] = vim.fn.expand("%:f"),
+
       -- Date and time
       ["date"] = os.date("%Y%m%d", os.time()),
       ["year"] = os.date("%Y", os.time()),
