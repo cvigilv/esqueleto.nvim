@@ -8,7 +8,11 @@ M.writetemplate = function(file)
   end
 end
 
-M.gettemplates = function(pattern, alldirectories)
+M.isignored = function (ignore, filepath)
+  return ignore(filepath)
+end
+
+M.gettemplates = function(pattern, alldirectories, ignore)
   local templates = {}
 
   -- Count directories that contain templates for pattern
@@ -25,10 +29,12 @@ M.gettemplates = function(pattern, alldirectories)
       for filepath in vim.fs.dir(directory .. pattern .. '/') do
         filepath = directory .. pattern .. "/" .. filepath
         local name = vim.fs.basename(filepath)
-        if ndirs > 1 then
-          name = vim.fn.simplify(directory) .. " :: " .. name
+        if not M.isignored(ignore, name) then
+          if ndirs > 1 then
+            name = vim.fn.simplify(directory) .. " :: " .. name
+          end
+          templates[name] = filepath
         end
-        templates[name] = filepath
       end
     end
   end
@@ -83,7 +89,7 @@ M.inserttemplate = function(opts)
     end
 
     -- Get templates for selected pattern
-    local templates = M.gettemplates(pattern, opts.directories)
+    local templates = M.gettemplates(pattern, opts.directories, opts.ignore)
 
     -- Pop-up selection UI
     M.selecttemplate(templates, opts)
