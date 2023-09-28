@@ -2,10 +2,6 @@ local M = {}
 
 _G.esqueleto_inserted = {}
 
-M.isignored = function(ignore, filepath)
-    return ignore(filepath)
-end
-
 M.writetemplate = function(file)
   if file ~= nil then
     vim.cmd("0r " .. file)
@@ -40,8 +36,47 @@ M.gettemplates = function(pattern, alldirectories)
   return templates
 end
 
-M.getunignoredtemplates = function(pattern, alldirectories, ignore)
+local any = function (f, t)
+  for _, e in pairs(t) do
+    if f(e) then
+      return true
+    end
+  end
+
+  return false
+end
+
+-- Determine if a file matches a gitignore glob pattern
+-- TODO
+local match_gitignore = function (filepath, gitignore_pattern)
+  error 'TODO'
+end
+
+-- Determine if a file should be ignored,
+-- according to user's choice
+local isignored = function (filepath, extra_ignore, use_os_ignore)
+  local is_user_ignored = (function ()
+    if type(extra_ignore) == 'function' then
+      return extra_ignore(filepath)
+    else
+      return any(function (pat) return match_gitignore(filepath, pat) end, extra_ignore)
+    end
+  end)()
+
+  local is_os_ignored = (function ()
+    if not use_os_ignore then return false end
+    local os_ignore = require('esqueleto.constants').ignored_files
+    return any(function (pat) return match_gitignore(filepath, pat) end, os_ignore)
+  end)()
+
+  return is_user_ignored or is_os_ignored
+end
+
+M.getunignoredtemplates = function(pattern, opts)
   local templates = {}
+  local alldirectories = opts.directories
+  local extra_ignore = opts.extra_ignore
+  local use_os_ignore = opts.use_os_ignore
 
   -- Count directories that contain templates for pattern
   local ndirs = 0
@@ -56,7 +91,8 @@ M.getunignoredtemplates = function(pattern, alldirectories, ignore)
     if vim.fn.isdirectory(directory .. pattern .. '/') == 1 then
       for filepath in vim.fs.dir(directory .. pattern .. '/') do
         filepath = directory .. pattern .. "/" .. filepath
-        if not M.isignored(ignore, filepath) then
+        local ignored = isignored(filepath, extra_ignore, use_os_ignore)
+        if not ignored then
           local name = vim.fs.basename(filepath)
           if ndirs > 1 then
             name = vim.fn.simplify(directory) .. " :: " .. name
@@ -117,7 +153,7 @@ M.inserttemplate = function(opts)
     end
 
     -- Get templates for selected pattern
-    local templates = M.getunignoredtemplates(pattern, opts.directories, opts.ignore)
+    local templates = M.getunignoredtemplates(pattern, opts)
 
     -- Pop-up selection UI
     M.selecttemplate(templates, opts)
