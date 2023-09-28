@@ -18,7 +18,7 @@ M.updateconfig = function(config)
     directories = { config.directories, 'table' },
     patterns = { config.patterns, 'table' },
     use_os_ignore = { config.use_os_ignore, 'boolean' },
-    extra_ignore = { config.ignore, { 'table', 'function' } },
+    extra_ignore = { config.extra_ignore, { 'table', 'function' } },
   })
 
   return config
