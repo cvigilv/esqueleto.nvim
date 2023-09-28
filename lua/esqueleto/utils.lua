@@ -49,8 +49,15 @@ end
 -- Determine if a file matches a gitignore glob pattern
 -- by converting to regex, then vim.regex API.
 local match_gitignore = function (filepath, gitignore_pattern)
-  local regpat = vim.fn.glob2regpat(gitignore_pattern)  -- ^$ automatically added
-  return vim.regex(regpat):match_str(filepath) ~= nil
+  local regpat = vim.fn.glob2regpat(gitignore_pattern):sub(2)  -- manually remove ^; hackish
+  local start, finish = vim.regex(regpat):match_str(filepath)
+  local res = (function ()
+    if start == nil or finish == nil then return false end
+    if start == finish then return false end  -- empty match, won't do
+    return finish == #filepath
+  end)()
+
+  return res
 end
 
 -- Determine if a file should be ignored,
