@@ -47,9 +47,10 @@ local any = function (f, t)
 end
 
 -- Determine if a file matches a gitignore glob pattern
--- TODO
+-- by converting to regex, then vim.regex API.
 local match_gitignore = function (filepath, gitignore_pattern)
-  error 'TODO'
+  local regpat = vim.fn.glob2regpat(gitignore_pattern)  -- ^$ automatically added
+  return vim.regex(regpat):match_str(filepath) ~= nil
 end
 
 -- Determine if a file should be ignored,
