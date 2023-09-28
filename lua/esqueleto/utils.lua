@@ -2,6 +2,10 @@ local M = {}
 
 _G.esqueleto_inserted = {}
 
+M.isignored = function(ignore, filepath)
+    return ignore(filepath)
+end
+
 M.writetemplate = function(file)
   if file ~= nil then
     vim.cmd("0r " .. file)
@@ -29,6 +33,36 @@ M.gettemplates = function(pattern, alldirectories)
           name = vim.fn.simplify(directory) .. " :: " .. name
         end
         templates[name] = filepath
+      end
+    end
+  end
+
+  return templates
+end
+
+M.getunignoredtemplates = function(pattern, alldirectories, ignore)
+  local templates = {}
+
+  -- Count directories that contain templates for pattern
+  local ndirs = 0
+  for _, directory in pairs(alldirectories) do
+    directory = vim.fn.fnamemodify(directory, ':p') -- expand path
+    ndirs = ndirs + vim.fn.isdirectory(directory .. pattern .. '/')
+  end
+
+  -- Get templates for pattern
+  for _, directory in ipairs(alldirectories) do
+    directory = vim.fn.fnamemodify(directory, ':p') -- expand path
+    if vim.fn.isdirectory(directory .. pattern .. '/') == 1 then
+      for filepath in vim.fs.dir(directory .. pattern .. '/') do
+        filepath = directory .. pattern .. "/" .. filepath
+        if not M.isignored(ignore, filepath) then
+          local name = vim.fs.basename(filepath)
+          if ndirs > 1 then
+            name = vim.fn.simplify(directory) .. " :: " .. name
+          end
+          templates[name] = filepath
+        end
       end
     end
   end
@@ -83,7 +117,7 @@ M.inserttemplate = function(opts)
     end
 
     -- Get templates for selected pattern
-    local templates = M.gettemplates(pattern, opts.directories)
+    local templates = M.getunignoredtemplates(pattern, opts.directories, opts.ignore)
 
     -- Pop-up selection UI
     M.selecttemplate(templates, opts)

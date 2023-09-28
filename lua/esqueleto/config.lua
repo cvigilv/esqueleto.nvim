@@ -4,6 +4,7 @@ M.default_config = {
   autouse = true,
   directories = { vim.fn.stdpath("config") .. "/skeletons" },
   patterns = {},
+  ignore = function (f) return vim.fn.fnamemodify(f, ':t') == '.DS_Store' end,
 }
 
 M.updateconfig = function(config)
@@ -15,6 +16,7 @@ M.updateconfig = function(config)
     autouse = { config.autouse, 'boolean' },
     directories = { config.directories, 'table' },
     patterns = { config.patterns, 'table' },
+    ignore = { config.ignore, 'function' },
   })
 
   return config
