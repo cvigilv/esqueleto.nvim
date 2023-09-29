@@ -36,70 +36,48 @@ M.gettemplates = function(pattern, alldirectories)
   return templates
 end
 
-local any = function (f, t)
-  for _, e in pairs(t) do
-    if f(e) then
-      return true
-    end
+M.getunignoredtemplates = function(pattern, opts)
+  local list_ignored = function (dir, ignored_pats)
+    return vim.tbl_flatten(vim.tbl_map(function (pat)
+      return vim.fn.globpath(dir, pat, true, true, true)
+    end, ignored_pats))
   end
 
-  return false
-end
+  local list_os_ignored_files = function (dir)
+    return list_ignored(dir, require('esqueleto.constants').ignored_patterns)
+  end
 
--- Determine if a file matches a gitignore glob pattern
--- by converting to regex, then vim.regex API.
-local match_gitignore = function (filepath, gitignore_pattern)
-  local regpat = vim.fn.glob2regpat(gitignore_pattern):sub(2)  -- manually remove ^; hackish
-  local start, finish = vim.regex(regpat):match_str(filepath)
-  local res = (function ()
-    if start == nil or finish == nil then return false end
-    if start == finish then return false end  -- empty match, won't do
-    return finish == #filepath
-  end)()
+  local list_user_ignored_files = list_ignored
 
-  return res
-end
-
--- Determine if a file should be ignored,
--- according to user's choice
-local isignored = function (filepath, extra_ignore, use_os_ignore)
-  local is_user_ignored = (function ()
-    if type(extra_ignore) == 'function' then
-      return extra_ignore(filepath)
+  local templates = {}
+  local use_os_ignore = opts.use_os_ignore
+  local extra_ignore_pats, extra_ignore_func = (function ()
+    if type(opts.extra_ignore) == 'function' then
+      return {}, opts.extra_ignore
     else
-      return any(function (pat) return match_gitignore(filepath, pat) end, extra_ignore)
+      return opts.extra_ignore, function (_) return false end
     end
   end)()
-
-  local is_os_ignored = (function ()
-    if not use_os_ignore then return false end
-    local os_ignore = require('esqueleto.constants').ignored_files
-    return any(function (pat) return match_gitignore(filepath, pat) end, os_ignore)
-  end)()
-
-  return is_user_ignored or is_os_ignored
-end
-
-M.getunignoredtemplates = function(pattern, opts)
-  local templates = {}
-  local alldirectories = opts.directories
-  local extra_ignore = opts.extra_ignore
-  local use_os_ignore = opts.use_os_ignore
+  local alldirectories = vim.tbl_map(function (f)
+    return vim.fn.fnamemodify(f, ':p')
+  end, opts.directories)
 
   -- Count directories that contain templates for pattern
   local ndirs = 0
   for _, directory in pairs(alldirectories) do
-    directory = vim.fn.fnamemodify(directory, ':p') -- expand path
     ndirs = ndirs + vim.fn.isdirectory(directory .. pattern .. '/')
   end
 
   -- Get templates for pattern
   for _, directory in ipairs(alldirectories) do
-    directory = vim.fn.fnamemodify(directory, ':p') -- expand path
-    if vim.fn.isdirectory(directory .. pattern .. '/') == 1 then
-      for filepath in vim.fs.dir(directory .. pattern .. '/') do
-        filepath = directory .. pattern .. "/" .. filepath
-        local ignored = isignored(filepath, extra_ignore, use_os_ignore)
+    local pattern_dir = directory .. pattern .. '/'
+    local exists_dir = vim.fn.isdirectory(pattern_dir) == 1
+    if exists_dir then
+      local os_ignored_files = use_os_ignore and list_os_ignored_files(pattern_dir) or {}
+      local user_ignored_files = list_user_ignored_files(pattern_dir, extra_ignore_pats)
+      for basename in vim.fs.dir(pattern_dir) do
+        local filepath = vim.fs.normalize(pattern_dir .. basename)
+        local ignored = extra_ignore_func(filepath) or vim.tbl_contains(os_ignored_files, filepath) or vim.tbl_contains(user_ignored_files, filepath)
         if not ignored then
           local name = vim.fs.basename(filepath)
           if ndirs > 1 then
