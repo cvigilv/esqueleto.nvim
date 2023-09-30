@@ -51,7 +51,16 @@ require("esqueleto").setup(
       patterns = { "README.md", "python" },
 
       -- whether to auto-use a template if it's the only one for a pattern
-      autouse = true
+      autouse = true,
+
+      advanced = {
+        -- List of files glob patterns to ignore
+        ignored = {},
+
+        -- Ignore OS files like .DS_Store
+        -- Exhaustive list: https://www.toptal.com/developers/gitignore/api/windows,macos,linux
+        ignore_os_files = true,
+      },
     }
 )
 ```
@@ -63,7 +72,11 @@ The default options of `esqueleto` are
     {
       directories = { vim.fn.stdpath("config") .. "/skeletons" },
       patterns = { },
-      autouse = true
+      autouse = true,
+      advanced = {
+        ignored = {},
+        ignore_os_files = true,
+      }
     }
 ~~~
 
