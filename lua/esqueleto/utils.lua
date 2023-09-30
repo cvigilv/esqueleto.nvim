@@ -36,29 +36,38 @@ M.gettemplates = function(pattern, alldirectories)
   return templates
 end
 
-M.getunignoredtemplates = function(pattern, opts)
-  local list_ignored = function (dir, ignored_pats)
-    return vim.tbl_flatten(vim.tbl_map(function (pat)
-      return vim.fn.globpath(dir, pat, true, true, true)
-    end, ignored_pats))
-  end
+-- List ignored files under a directory, given a list of glob patterns
+local listignored = function(dir, ignored_pats)
+  return vim.tbl_flatten(vim.tbl_map(function(pat)
+    return vim.fn.globpath(dir, pat, true, true, true)
+  end, ignored_pats))
+end
 
-  local list_os_ignored_files = function (dir)
-    return list_ignored(dir, require('esqueleto.constants').ignored_patterns)
-  end
-
-  local list_user_ignored_files = list_ignored
-
-  local templates = {}
-  local use_os_ignore = opts.use_os_ignore
-  local extra_ignore_pats, extra_ignore_func = (function ()
-    if type(opts.extra_ignore) == 'function' then
-      return {}, opts.extra_ignore
+-- Returns a ignore checker
+local getignorechecker = function(opts)
+  local os_ignore_pats = opts.use_os_ignore and require('esqueleto.constants').ignored_patterns or {}
+  local extra = opts.extra_ignore
+  local extra_ignore_pats, extra_ignore_func = (function()
+    if type(extra) == 'function' then
+      return {}, extra
     else
-      return opts.extra_ignore, function (_) return false end
+      assert(type(extra) == 'table')
+      return extra, function(_) return false end
     end
   end)()
-  local alldirectories = vim.tbl_map(function (f)
+
+  return function(filepath)
+    local dir = vim.fn.fnamemodify(filepath, ':p:h')
+    return extra_ignore_func(dir) or vim.tbl_contains(listignored(dir, os_ignore_pats), filepath)
+      or vim.tbl_contains(listignored(dir, extra_ignore_pats), filepath)
+  end
+end
+
+M.getunignoredtemplates = function(pattern, opts)
+  local templates = {}
+  local isignored = getignorechecker(opts)
+
+  local alldirectories = vim.tbl_map(function(f)
     return vim.fn.fnamemodify(f, ':p')
   end, opts.directories)
 
@@ -73,12 +82,9 @@ M.getunignoredtemplates = function(pattern, opts)
     local pattern_dir = directory .. pattern .. '/'
     local exists_dir = vim.fn.isdirectory(pattern_dir) == 1
     if exists_dir then
-      local os_ignored_files = use_os_ignore and list_os_ignored_files(pattern_dir) or {}
-      local user_ignored_files = list_user_ignored_files(pattern_dir, extra_ignore_pats)
       for basename in vim.fs.dir(pattern_dir) do
         local filepath = vim.fs.normalize(pattern_dir .. basename)
-        local ignored = extra_ignore_func(filepath) or vim.tbl_contains(os_ignored_files, filepath) or vim.tbl_contains(user_ignored_files, filepath)
-        if not ignored then
+        if not isignored(filepath) then
           local name = vim.fs.basename(filepath)
           if ndirs > 1 then
             name = vim.fn.simplify(directory) .. " :: " .. name
