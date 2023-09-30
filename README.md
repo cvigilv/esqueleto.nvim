@@ -55,6 +55,7 @@ require("esqueleto").setup(
 
       advanced = {
         -- List of files glob patterns to ignore
+        -- Or alternatively, a function that determines if a file should be ignored
         ignored = {},
 
         -- Ignore OS files like .DS_Store
