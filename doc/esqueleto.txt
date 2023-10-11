@@ -54,6 +54,12 @@ First, |esqueleto| setup in the `init.lua` file is as follows: >
               -- File type
               'python',
           },
+
+          -- Advanced options
+          advanced = {
+              ignore_os_files = true,
+              ignore = {}
+          },
     })
 <
 Second (and based in the setup showcased above), the following step involves
@@ -119,6 +125,7 @@ setup({patterns}, {directory})
             {
                 directories = {vim.fn.stdpath("config") .. "/skeletons"},
                 patterns = { },
+                advanced = { ignore = {}, ignore_os_files = true },
             }
         )
 <
@@ -127,6 +134,15 @@ setup({patterns}, {directory})
       • {patterns}  (table) File names or patterns to match
       • {directory} (string) An absolute or relative path to the directory
                     with templates.
+      • {advanced}  (table) Advanced options, including:
+                    • {ignore}          (table|function) List of glob patterns of
+                                        files to be ignored; alternatively, a
+                                        predicate that determines if a file
+                                        should be ignored, given its full filepath.
+                    • {ignore_os_files} (boolean) Whether to ignore OS files,
+                                        such as `.DS_Store`, `Desktop.ini`.
+                                        For an exhaustive list, see
+                                        `https://www.toptal.com/developers/gitignore/api/windows,macos,linux`
 
 ==============================================================================
                                                                  *ex-commands*
