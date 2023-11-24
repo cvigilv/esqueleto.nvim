@@ -1,16 +1,6 @@
-local M = {}
+local utils = require("esqueleto.utils")
 
--- Extend 'os' to be able to capture stdout from execute
-function M.capture(cmd, raw)
-  local f = assert(io.popen(cmd, 'r'))
-  local s = assert(f:read('*a'))
-  f:close()
-  if raw then return s end
-  s = string.gsub(s, '^%s+', '')
-  s = string.gsub(s, '%s+$', '')
-  s = string.gsub(s, '[\n\r]+', '')
-  return s
-end
+local M = {}
 
 M.default_config = {
   autouse = true,
@@ -34,12 +24,12 @@ M.default_config = {
       ["time"] = function() return os.date("%T", os.time()) end,
 
       -- System
-      ["host"] = M.capture("hostname", false),
+      ["host"] = utils.capture("hostname", false),
       ["user"] = os.getenv("USER"),
 
       -- Github
-      ["gh-email"] = M.capture("git config user.email", false),
-      ["gh-user"] = M.capture("git config user.name", false),
+      ["gh-email"] = utils.capture("git config user.email", false),
+      ["gh-user"] = utils.capture("git config user.name", false),
     },
   },
 }
