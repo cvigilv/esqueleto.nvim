@@ -3,10 +3,10 @@ local M = {}
 --- Parse template contents in order to expand wildcards
 ---@param str string String to parse
 ---@param lookup table Wildcards lookup table
----@return table parsed_str Table containing all lines with wildcards expanded
+---@return table parsed_str Table containing all lines with wildcards expanded table
+---@return table cursor_pos Row-column position tuple of the last cursor wildcard found.
 M.parse = function(str, lookup)
   local parsedstr = {}
-
   for _, l in ipairs(vim.split(str, "\n", { plain = true })) do
     for wildcard in l:gmatch("${([^{,^}]+)}") do
       local expansion = nil
@@ -26,7 +26,17 @@ M.parse = function(str, lookup)
     table.insert(parsedstr, l)
   end
 
-  return parsedstr
+  -- Find cursor wildcard
+  local cursor_pos = nil
+  for row, l in ipairs(parsedstr) do
+    local col, _ = string.find(l, "${cursor}")
+    if col ~= nil then
+      cursor_pos = {row, col}
+    end
+    parsedstr[row] = parsedstr[row]:gsub("${cursor}", "")
+  end
+
+  return parsedstr, cursor_pos
 end
 
 return M

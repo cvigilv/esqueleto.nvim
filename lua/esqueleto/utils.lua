@@ -17,6 +17,17 @@ M.capture = function(cmd, raw)
   return s
 end
 
+--- Map function over each entry in table
+---@param tbl table Table to map
+---@param f function Function to map
+---@return table mapped_tbl Function-mapped table
+M.map = function(tbl, f)
+    local t = {}
+    for k,v in pairs(tbl) do
+        t[k] = f(v)
+    end
+    return t
+end
 
 --- Write template contents to current buffer
 ---@param file string Template file path
@@ -25,14 +36,21 @@ M.writetemplate = function(file, opts)
   if file ~= nil and not opts.wildcards.expand then
     -- Place contents of template directly to buffer
     vim.cmd("0r " .. file)
+    vim.cmd("norm G")
   elseif file ~= nil and opts.wildcards.expand then
     -- Expand wildcards from template and place contents in buffer
     local content = io.open(file, "r"):read("*a")
+    local parsed_content, cursor_pos = wildcards.parse(content, opts.wildcards.lookup)
     if content ~= nil then
-      vim.api.nvim_buf_set_lines(0, 0, -1, true, wildcards.parse(content, opts.wildcards.lookup))
+      vim.api.nvim_buf_set_lines(0, 0, -1, true, parsed_content)
+    end
+    -- If a cursor wildcard was found, place cursor there
+    if cursor_pos ~= nil then
+      vim.api.nvim_win_set_cursor(0, cursor_pos)
+    else
+      vim.cmd("norm G")
     end
   end
-  vim.cmd("norm G")
 end
 
 --- Get available templates for current buffer
