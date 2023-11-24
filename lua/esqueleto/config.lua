@@ -32,6 +32,10 @@ M.default_config = {
       ["gh-user"] = utils.capture("git config user.name", false),
     },
   },
+  advanced = {
+    ignored = {},
+    ignore_os_files = true,
+  }
 }
 
 --- Update default configuration table by merging with user's configuration table
@@ -43,10 +47,13 @@ M.updateconfig = function(config)
 
   -- Validate setup
   vim.validate({
-    autouse = { config.autouse, "boolean" },
-    directories = { config.directories, "table" },
-    patterns = { config.patterns, "table" },
+    autouse = { config.autouse, 'boolean' },
+    directories = { config.directories, 'table' },
+    patterns = { config.patterns, 'table' },
     wildcards = { config.wildcards, "table" },
+    advanced = { config.advanced, 'table' },
+    ["advanced.ignored"] = { config.advanced.ignored, { 'table', 'function' } },
+    ["advanced.ignore_os_files"] = { config.advanced.ignore_os_files, 'boolean' },
   })
 
   return config
