@@ -5,7 +5,7 @@ local M = {}
 --- Capture output of command
 ---@param cmd string Command to run
 ---@param raw boolean Whether the function returns the raw string
----@return string
+---@return string output Command standard output
 M.capture = function(cmd, raw)
   local f = assert(io.popen(cmd, 'r'))
   local s = assert(f:read('*a'))
@@ -18,6 +18,9 @@ M.capture = function(cmd, raw)
 end
 
 
+--- Write template contents to current buffer
+---@param file string Template file path
+---@param opts table Plugin configuration table
 M.writetemplate = function(file, opts)
   if file ~= nil and not opts.wildcards.expand then
     -- Place contents of template directly to buffer
@@ -32,6 +35,10 @@ M.writetemplate = function(file, opts)
   vim.cmd("norm G")
 end
 
+--- Get available templates for current buffer
+---@param pattern string Pattern to use to find templates
+---@param alldirectories table Directories on which to search
+---@return table templates Available templates for current buffer
 M.gettemplates = function(pattern, alldirectories)
   local templates = {}
 
@@ -60,6 +67,9 @@ M.gettemplates = function(pattern, alldirectories)
   return templates
 end
 
+--- Select template to insert on current buffer
+---@param templates table Available template table
+---@param opts table Plugin configuration table
 M.selecttemplate = function(templates, opts)
   -- Check if templates exist
   if vim.tbl_isempty(templates) then
@@ -78,7 +88,7 @@ M.selecttemplate = function(templates, opts)
 
   -- If only one template, write and return early
   if #templatenames == 1 and opts.autouse then
-    M.writetemplate(templates[templatenames[1]])
+    M.writetemplate(templates[templatenames[1]], opts)
     return nil
   end
 
@@ -88,6 +98,8 @@ M.selecttemplate = function(templates, opts)
   end)
 end
 
+--- Insert template on current buffer
+---@param opts table Plugin configuration table
 M.inserttemplate = function(opts)
   -- Get pattern alternatives for current file
   local filepath = vim.fn.expand("%:p")

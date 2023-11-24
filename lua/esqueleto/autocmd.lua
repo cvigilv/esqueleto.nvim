@@ -2,6 +2,8 @@ local utils = require('esqueleto.utils')
 
 local M = {}
 
+--- Create autocommands for `esqueleto.nvim`
+---@param opts table Plugin configuration table
 M.createautocmd = function(opts)
   -- create autocommands for skeleton insertion
   local group = vim.api.nvim_create_augroup(

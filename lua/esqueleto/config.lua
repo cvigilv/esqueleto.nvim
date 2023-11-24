@@ -34,6 +34,9 @@ M.default_config = {
   },
 }
 
+--- Update default configuration table by merging with user's configuration table
+---@param config table user configuration table
+---@return table
 M.updateconfig = function(config)
   vim.validate({ config = { config, "table", true } })
   config = vim.tbl_deep_extend("force", M.default_config, config or {})

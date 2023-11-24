@@ -1,5 +1,9 @@
 local M = {}
 
+--- Parse template contents in order to expand wildcards
+---@param str string String to parse
+---@param lookup table Wildcards lookup table
+---@return table parsed_str Table containing all lines with wildcards expanded
 M.parse = function(str, lookup)
   local parsedstr = {}
 
