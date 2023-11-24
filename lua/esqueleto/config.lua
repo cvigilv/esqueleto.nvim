@@ -20,18 +20,21 @@ M.default_config = {
     expand = true,
     lookup = {
       -- File
-      ["filename"] = vim.fn.expand("%:t:r"),
-      ["filepath"] = vim.fn.expand("%:f"),
+      ["filename"] = function() return vim.fn.expand("%:t:r") end,
+      ["fileabspath"] = function() return vim.fn.expand("%:p") end,
+      ["filerelpath"] = function() return vim.fn.expand("%:p:~") end,
+      ["fileext"] = function() return vim.fn.expand("%:e") end,
+      ["filetype"] = function() return vim.bo.filetype end,
 
       -- Date and time
-      ["date"] = os.date("%Y%m%d", os.time()),
-      ["year"] = os.date("%Y", os.time()),
-      ["month"] = os.date("%m", os.time()),
-      ["day"] = os.date("%d", os.time()),
-      ["time"] = os.date("%T", os.time()),
+      ["date"] = function() return os.date("%Y%m%d", os.time()) end,
+      ["year"] = function() return os.date("%Y", os.time()) end,
+      ["month"] = function() return os.date("%m", os.time()) end,
+      ["day"] = function() return os.date("%d", os.time()) end,
+      ["time"] = function() return os.date("%T", os.time()) end,
 
       -- System
-      ["host"] = os.getenv("HOSTNAME"),
+      ["host"] = M.capture("hostname", false),
       ["user"] = os.getenv("USER"),
 
       -- Github
