@@ -85,12 +85,22 @@ The default options of `esqueleto` are
 
 `esqueleto.nvim` is in its infancy (expect breaking changes from time to time).
 I intend on extending this plugin with some functionality I would like for a template
-manager. At some point `esqueleto.nvim` should have the following (ordered by priority):
+manager.
 
-- Template creation interface
+For version 1.0 (currently in development), the following should be implemented:
 - Project specific templates
-- Template preview via [Telescope](https://github.com/nvim-telescope/telescope.nvim)
-- User customizable prompt and insertion rules
+- Wildcards
+  - Format spec
+  - Expansion rules
+  - User defined wildcards
+- Template creation interface
+
+For version 2.0, the following should be implemented:
+- General UI/UX improvements
+- [Telescope](https://github.com/nvim-telescope/telescope.nvim)-based template selector
+- Floating window template selector
+- User customizable prompt UI
+- User customizable insertion rules
 
 ## Contributing
 
