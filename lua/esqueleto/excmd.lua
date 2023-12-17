@@ -13,10 +13,9 @@ M.create_template = function(opts)
       format_item = function(item) return item .. " buffer" end
     },
     function(choice)
-      vim.print(choice)
-      if choice == "source" then
+      if choice == "current" then
         state.source = vim.fn.tempname()
-        vim.cmd("w " .. state.source)
+        vim.cmd("silent w " .. state.source)
       else
         state.source = choice
       end
