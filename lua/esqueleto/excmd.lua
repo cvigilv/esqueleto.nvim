@@ -3,13 +3,14 @@ local M = {}
 local utils = require("esqueleto.utils")
 
 M.create_template = function(opts)
+  vim.notify("\nesqueleto :: Entering template creation!", vim.log.levels.WARN)
   local state = {}
 
   -- Ask if new template is (i) based in current buffer or (ii) from scratch
   vim.ui.select(
     { "current", "empty" },
     {
-      prompt = "Create a new template with:",
+      prompt = " ‼ Create a new template with:",
       format_item = function(item) return item .. " buffer" end
     },
     function(choice)
@@ -28,18 +29,37 @@ M.create_template = function(opts)
 
   -- Ask if new template is triggered by (i) file type or (ii) file name
   vim.ui.select(
-    { "File type", "File name" },
-    { prompt = "\nTrigger template insertion using:" },
-    function(choice)
-      vim.ui.input({ prompt = "\nTemplate " .. choice:lower() .. ": " }, function(input)
+    { "type", "name" },
+    {
+      prompt = "\n ‼ Trigger template insertion using:",
+      format_item = function(item) return "file" .. item end
+    },
+    function(trigger)
+      if trigger == nil then
+        return nil
+      end
+
+      local detected = nil
+      if trigger == "type" then
+        detected = vim.bo.filetype
+      elseif trigger == "name" then
+        detected = vim.fn.expand("%:p:t")
+      end
+
+      vim.ui.input(
+      { prompt = "\n\n ‼ Set trigger as file " .. trigger .. " = ", default = detected},
+      function(input)
         state.trigger = input
-        if not vim.tbl_contains(opts.patterns, input) then
-          vim.notify(
-            "\nesqueleto :: Trigger not currently recognized by esqueleto!",
-            vim.log.levels.WARN
-          )
-        end
-      end)
+      end
+      )
+
+      -- Warn user if trigger is not currently tracked
+      if not vim.tbl_contains(opts.patterns, state.trigger) then
+        vim.notify(
+        "\nesqueleto :: Trigger not currently recognized by esqueleto!",
+        vim.log.levels.WARN
+        )
+      end
     end
   )
   if not state.trigger then
@@ -74,6 +94,7 @@ M.create_template = function(opts)
     vim.cmd("0r " .. state.source)
   end
   vim.cmd("cd " .. state.directory .. "/" .. state.trigger)
+  vim.notify("\nesqueleto :: Exiting template creation!", vim.log.levels.WARN)
 end
 
 M.createexcmd = function(opts)
