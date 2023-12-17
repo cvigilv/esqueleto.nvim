@@ -15,16 +15,6 @@ file name or pattern.
 
 Install `esqueleto.nvim` with your preferred package manager:
 
-[vim-plug](https://github.com/junegunn/vim-plug)
-
-```vim
-# Stable
-Plug 'cvigilv/esqueleto.nvim'
-
-# Development (latest)
-Plug 'cvigilv/esqueleto.nvim', { 'branch': 'develop'}
-```
-
 [packer](https://github.com/wbthomason/packer.nvim)
 
 ```lua
@@ -35,51 +25,112 @@ use 'cvigilv/esqueleto.nvim'
 use { 'cvigilv/esqueleto.nvim', branch = "develop" }
 ```
 
+[lazy](https://github.com/folke/lazy.nvim)
+
+```lua
+-- Stable
+{
+  dir = "cvigilv/esqueleto.nvim",
+  config = function()
+    require("esqueleto").setup({
+        -- Your configuration goes here...
+      }
+    )
+  end,
+},
+
+-- Development (latest)
+{
+  dir = "cvigilv/esqueleto.nvim",
+  branch = "develop",
+  config = function()
+    require("esqueleto").setup(
+      {
+        -- Your configuration goes here...
+      }
+    )
+  end,
+}
+```
+
 ## Usage & configuration
 
 To configure `esqueleto.nvim` and use it, the following should be present in
 your `init.lua`:
 ```lua
 require("esqueleto").setup(
-    {
-      -- Template directories
-      directories = {"~/.config/nvim/skeletons/"},
+  {
+    -- Whether to auto-use a template if it's the only one for a pattern
+    autouse = true,
 
-      -- Patterns to match when creating new file
-      -- Can be either (i) file names or (ii) file types.
-      -- Exact file name match have priority
-      patterns = { "README.md", "python" },
+    -- Directories to check for file templates
+    directories = {"~/.config/nvim/skeletons/", "~/.config/nvim/work_skeletons/"},
 
-      -- whether to auto-use a template if it's the only one for a pattern
-      autouse = true,
+    -- Patterns to match when creating new file, can be either (i) file names or
+    -- (ii) file types (exact file name match have priority over file types).
+    patterns = { "README.md", "python" },
 
-      advanced = {
-        -- List of files glob patterns to ignore
-        -- Or alternatively, a function that determines if a file should be ignored
-        ignored = {},
-
-        -- Ignore OS files like .DS_Store
-        -- Exhaustive list: https://www.toptal.com/developers/gitignore/api/windows,macos,linux
-        ignore_os_files = true,
-      },
+    -- Wildcards expansion options and look-up table
+    wildcards = {
+      expand = true, -- whether to expand wildcards
+      lookup = { -- This can be either:
+        -- (i) a string,
+        ["signature"] = "Signed: My cool name",
+        -- or (ii) a function.
+        ["random_number"] = function() return math.random() end,
+      }
     }
+
+    -- Advanced `esqueleto.nvim` options
+    advanced = {
+      -- List of files glob patterns to ignore or a function that determines if a
+      -- file should be ignored.
+      ignored = {},
+
+      -- Ignore OS-generated files (e.g. `.DS_Store`)
+      ignore_os_files = true,
+    },
+  }
 )
 ```
 For more information, refer to docs (`:h esqueleto`). For example skeleton files,
 check [the `skeletons` folder](skeletons/).
 
 The default options of `esqueleto` are
-~~~lua
-    {
-      directories = { vim.fn.stdpath("config") .. "/skeletons" },
-      patterns = { },
-      autouse = true,
-      advanced = {
-        ignored = {},
-        ignore_os_files = true,
-      }
-    }
-~~~
+```lua
+{
+  autouse = true,
+  directories = { vim.fn.stdpath("config") .. "/skeletons" },
+  patterns = {},
+  wildcards = {
+    expand = true,
+    lookup = {
+      -- File related
+      ["filename"]    = function() return vim.fn.expand("%:t:r") end,
+      ["fileabspath"] = function() return vim.fn.expand("%:p") end,
+      ["filerelpath"] = function() return vim.fn.expand("%:p:~") end,
+      ["fileext"]     = function() return vim.fn.expand("%:e") end,
+      ["filetype"]    = function() return vim.bo.filetype end,
+      -- Date and time related
+      ["date"]  = function() return os.date("%Y%m%d", os.time()) end,
+      ["year"]  = function() return os.date("%Y", os.time()) end,
+      ["month"] = function() return os.date("%m", os.time()) end,
+      ["day"]   = function() return os.date("%d", os.time()) end,
+      ["time"]  = function() return os.date("%T", os.time()) end,
+      -- System related
+      ["host"] = utils.capture("hostname", false),
+      ["user"] = os.getenv("USER"),
+      -- Github related
+      ["gh-email"] = utils.capture("git config user.email", false),
+      ["gh-user"]  = utils.capture("git config user.name", false),
+    },
+  },
+  advanced = {
+    ignored = {},
+    ignore_os_files = true,
+  }
+}
+```
 
 ## Roadmap
 

@@ -100,6 +100,8 @@ M.create_template = function(opts)
   vim.notify("\nesqueleto :: Exiting template creation!", vim.log.levels.WARN)
 end
 
+--- Create excommands for `esqueleto.nvim`
+---@param opts table Plugin configuration table
 M.createexcmd = function(opts)
   -- create ex-command for on-demand use
   vim.api.nvim_create_user_command("EsqueletoInsert", function()
