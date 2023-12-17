@@ -43,12 +43,16 @@ M.create_template = function(opts)
   end
 
   -- Ask for template directory
-  vim.ui.select(opts.directories, { prompt = "\nTemplate directory:" }, function(choice)
-    state.directory = choice
-  end)
-  if not state.directory then
-    vim.notify("\nesqueleto :: Exiting template creation!", vim.log.levels.WARN)
-    return nil
+  if vim.tbl_count(opts.directories) > 1 then
+    vim.ui.select(opts.directories, { prompt = "\nTemplate directory:" }, function(choice)
+      state.directory = choice
+    end)
+    if not state.directory then
+      vim.notify("\nesqueleto :: Exiting template creation!", vim.log.levels.WARN)
+      return nil
+    end
+  else
+    state.directory = opts.directories[1]
   end
 
   -- Create paths
