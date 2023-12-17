@@ -10,10 +10,11 @@ M.create_template = function(opts)
     { "current buffer", "empty buffer" },
     { prompt = "Create a new template with:" },
     function(choice)
-      if not choice then
-        return nil
+      state.source = (choice == "current buffer" and vim.fn.tempname() or "empty")
+
+      if state.source ~= "empty" then
+        vim.cmd("w "..state.source)
       end
-      state.source = (choice == "current buffer" and vim.fn.expand("%:p") or "empty")
     end
   )
   if not state.source then
