@@ -116,11 +116,10 @@ nvim
 ├── init.lua
 └── skeletons
     ├── LICENSE
-    │   ├── GNUGPLv3
     │   └── MIT
     └── python
-        ├── default
-        └── custom
+        ├── default.py
+        └── cli.py
 ```
 Here, we have a single skeleton directories and two possible triggers for template insertion:
 `python` files and files named `LICENSE`.
@@ -143,11 +142,13 @@ With this configuration, one will be prompted with the template insertion whenev
 The default options of `esqueleto` are the following:
 ~~~lua
 {
+  -- Standard options
   directories = { vim.fn.stdpath("config") .. "/skeletons" }, -- template directories
   patterns = { }, -- trigger patterns for file creation, file name trigger has priority
   autouse = true, -- whether to auto-use a template if it's the only one for a pattern
 
-  wildcards = {  -- Wild-card options
+  -- Wild-card options
+  wildcards = {  
     expand = true, -- whether to expand wild-cards
     lookup = { -- wild-cards look-up table
       -- File-specific
@@ -173,8 +174,9 @@ The default options of `esqueleto` are the following:
       ["gh-user"] = utils.capture("git config user.name", false),
     },
   },
-
-  advanced = { -- Advanced options
+  
+  -- Advanced options
+  advanced = {
     ignored = {}, -- List of glob patterns or function that determines if a file is ignored
     ignore_os_files = true, -- whether to ignore OS files (e.g. .DS_Store)
   }
