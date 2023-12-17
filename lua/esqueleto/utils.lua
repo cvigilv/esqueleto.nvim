@@ -148,13 +148,13 @@ M.selecttemplate = function(templates, opts)
 
   -- If only one template, write and return early
   if #templatenames == 1 and opts.autouse then
-    M.writetemplate(templates[templatenames[1]], opts)
+    M.writetemplate(vim.loop.fs_realpath(templates[templatenames[1]]), opts)
     return nil
   end
 
   -- Select template
   vim.ui.select(templatenames, { prompt = "Select skeleton to use:" }, function(choice)
-    M.writetemplate(templates[choice], opts)
+    M.writetemplate(vim.loop.fs_realpath(templates[choice]), opts)
   end)
 end
 
