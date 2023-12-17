@@ -103,6 +103,7 @@ end
 M.createexcmd = function(opts)
   -- create ex-command for on-demand use
   vim.api.nvim_create_user_command("EsqueletoInsert", function()
+    _G.esqueleto_inserted[vim.fn.expand("%:p")] = false
     utils.inserttemplate(opts)
   end, {})
 
