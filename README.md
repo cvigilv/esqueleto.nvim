@@ -317,6 +317,17 @@ For version 2.0, the following should be implemented:
 
 ---
 
+## Similar plugins
+`esqueleto.nvim` is just on of the template insertion plugins currently available for
+Neovim. Here are some other proyects that are similar in nature:
+
+- [spooky.nvim](https://github.com/Futarimiti/spooky.nvim)
+- [template.nvim](https://github.com/nvimdev/template.nvim)
+- [new-file-template.nvim](https://github.com/otavioschwanck/new-file-template.nvim)
+- [skel-nvim](https://github.com/motosir/skel-nvim)
+
+---
+
 ## Contributing
 
 Pull requests are welcomed for improvement of tool and community templates. Please contribute
