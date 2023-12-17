@@ -4,7 +4,9 @@ Reduce your boilerplate code the lazy-bones way.
 
 ## What is `esqueleto`?
 
-![Preview](https://i.imgur.com/MBMkSF7.gif)
+<p align="center">
+  <img width="66%" src="https://github.com/cvigilv/esqueleto.nvim/assets/30091515/f3b783f2-2da8-49ae-9ac1-96141bb0b00b">  
+</p>
 
 `esqueleto.nvim` is a lua-based plugin that intends to make the use of templates
 (or as the Neo/Vim community calls, "skeletons") as easy and straightforward as possible.
@@ -138,9 +140,8 @@ require("esqueleto").setup(
 ```
 
 With this configuration, one will be prompted with the template insertion whenever an empty
-(i) `python` file type or (ii) file named `LICENSE` are create. This looks as follows:
-
-**MOVIE**
+(i) `python` file type or (ii) file named `LICENSE` are create. This configuration will
+replicate the behavior seen in the video introduction.
 
 ### Defaults
 The default options of `esqueleto` are the following:
@@ -209,9 +210,19 @@ This is the intended behavior for `esqueleto`, since one can have, for example, 
 templates that match all `python` files and link some of this to trigger exclusively when a
 file with a specific name is found.
 
-So, from the quickstart example, let's create a new trigger for files named `cli.py`. Here,
-instead of creating a new file, we will create a softlink to the template we already have in
-the `python` directory. From this, we should obtain the following structure:
+So, from the quickstart example, let's create a new trigger for files named `cli.py`. First,
+we will add the trigger to the configuration table:
+
+```lua
+require("esqueleto").setup(
+  {
+    patterns = { "LICENSE", "python", "cli.py" },
+  }
+)
+```
+
+Then, instead of creating a new file, we will create a softlink to the template we already 
+have in the `python` directory. From this, we should obtain the following structure:
 
 ```
 skeletons
@@ -227,9 +238,12 @@ skeletons
 and now we will trigger template insertion for empty (i) `python` type, (ii) `LICENSE` and
 (iii) `cli.py` named files:
 
-MOVIE
+<p align="center">
+  <img width="66%" src="https://github.com/cvigilv/esqueleto.nvim/assets/30091515/2bc174ca-7a76-4776-8d51-2fd1941091a1">  
+</p>
 
-
+Finally, the command `EsqueletoNew` provides of a user-friendly way for creating new
+templates.
 
 ### Wild-cards
 `esqueleto.nvim` supports wild-card expansion for dynamically filling templates with relevant
@@ -247,9 +261,6 @@ Lua-based function calls, which have the following structure:
 ```
 ${lua:function call}
 ```
-
-For example, 
-
 
 `esqueleto` comes with a series of ready-to-use wildcards:
 
