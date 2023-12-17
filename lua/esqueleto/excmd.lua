@@ -37,10 +37,12 @@ M.create_template = function(opts)
       format_item = function(item) return "file" .. item end
     },
     function(trigger)
+      -- Escape function if user decides to exit
       if trigger == nil then
         return nil
       end
 
+      -- Automatically detect filetype/filename
       local detected = nil
       if trigger == "type" then
         detected = vim.bo.filetype
@@ -48,6 +50,7 @@ M.create_template = function(opts)
         detected = vim.fn.expand("%:p:t")
       end
 
+      -- Prompt for trigger input (prefilled with current buffer information)
       vim.ui.input(
       { prompt = "\n\n ‼ Set trigger as file " .. trigger .. " = ", default = detected},
       function(input)
@@ -69,7 +72,7 @@ M.create_template = function(opts)
     return nil
   end
 
-  -- Ask for template directory
+  -- Ask for template directory, skip if only 1 template directory exists
   if vim.tbl_count(opts.directories) > 1 then
     vim.ui.select(opts.directories, { prompt = "\nTemplate directory:" }, function(choice)
       state.directory = choice
