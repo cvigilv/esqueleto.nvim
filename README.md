@@ -123,7 +123,7 @@ nvim
         └── cli.py
 ```
 
-Here, we have a single skeleton directories and two possible triggers for template insertion:
+Here, we have a single skeleton directory and two possible triggers for template insertion:
 `python` files and files named `LICENSE`.
 
 To configure and use `esqueleto.nvim`, we need to tell `esqueleto` that we want to trigger
@@ -142,7 +142,7 @@ With this configuration, one will be prompted with the template insertion whenev
 
 **MOVIE**
 
-### Extended configuration
+### Defaults
 The default options of `esqueleto` are the following:
 
 ```lua
@@ -197,7 +197,7 @@ file name triggers. This correspond to the backbone of `esqueleto`, therefore is
 correctly understand how the plugin works for proper creation and organization of templates.
 
 `esqueleto` will **prioritize file name over file type templates**, because the first are more
-specific than the later. This means that, for example, if one has a named `python` template, 
+specific than the later. This means that, for example, if one has a named `python` template,
 `script.py`, and a set of `python` templates, `esqueleto` will work as follows:
 
 - If file created is named `script.py`, only the `script.py` template will be prompted for
@@ -209,7 +209,9 @@ This is the intended behavior for `esqueleto`, since one can have, for example, 
 templates that match all `python` files and link some of this to trigger exclusively when a
 file with a specific name is found.
 
-The example template directory for this case could be the following:
+So, from the quickstart example, let's create a new trigger for files named `cli.py`. Here,
+instead of creating a new file, we will create a softlink to the template we already have in
+the `python` directory. From this, we should obtain the following structure:
 
 ```
 skeletons
@@ -222,17 +224,23 @@ skeletons
     └── template -> ../python/cli.py
 ```
 
+and now we will trigger template insertion for empty (i) `python` type, (ii) `LICENSE` and
+(iii) `cli.py` named files:
+
+MOVIE
+
+
 
 ### Wild-cards
 `esqueleto.nvim` supports wild-card expansion for dynamically filling templates with relevant
-information. The current format for wild-cards if the following:
+information. The current format for wild-cards is the following:
 
 ```
-${wildcard}
+${wildcard-identifier}
 ```
 
 This wild-cards can be defined by the user under the `lookup` table found in the `wildcards`
-section of the configuration table. This wild-cards can either be (i) static values, e.g.
+section of the [configuration table](#defaults). This wild-cards can either be (i) static values, e.g.
 strings, numbers, etc., or (ii) functions. Additionally, a special type of wild-cards are
 Lua-based function calls, which have the following structure:
 
@@ -243,7 +251,7 @@ ${lua:function call}
 For example, 
 
 
-`esqueleto` comes with a series of ready to use wildcards:
+`esqueleto` comes with a series of ready-to-use wildcards:
 
 - _File related_
   - `filename`, the current file name
@@ -266,8 +274,9 @@ For example,
   - `gh-email`, email of GitHub user
   - `gh-user`, name of Github user
 
-Additionally, a special wild-cards exists for cursor placement (denoted with `${cursor}`) once
-the template is written in the current buffer.
+Additionally, a special wild-card exists for cursor placement (denoted with `${cursor}`),
+which moves the cursor to the last instance of this wildcard once the template is written in
+the current buffer.
 > [!WARNING]
 > *DO NOT OVERWRITE THIS WILDCARD*! This wildcard is protected, therefore replacing it in the
 > wildcards look-up table will produce unexpected behaviors.
