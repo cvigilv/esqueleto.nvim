@@ -7,13 +7,18 @@ M.create_template = function(opts)
 
   -- Ask if new template is (i) based in current buffer or (ii) from scratch
   vim.ui.select(
-    { "current buffer", "empty buffer" },
-    { prompt = "Create a new template with:" },
+    { "current", "empty" },
+    {
+      prompt = "Create a new template with:",
+      format_item = function(item) return item .. " buffer" end
+    },
     function(choice)
-      state.source = (choice == "current buffer" and vim.fn.tempname() or "empty")
-
-      if state.source ~= "empty" then
-        vim.cmd("w "..state.source)
+      vim.print(choice)
+      if choice == "source" then
+        state.source = vim.fn.tempname()
+        vim.cmd("w " .. state.source)
+      else
+        state.source = choice
       end
     end
   )
@@ -74,13 +79,13 @@ end
 
 M.createexcmd = function(opts)
   -- create ex-command for on-demand use
-  vim.api.nvim_create_user_command(
-    'Esqueleto',
-    function() utils.inserttemplate(opts) end,
-    {}
+  vim.api.nvim_create_user_command("EsqueletoInsert", function()
+    utils.inserttemplate(opts)
+  end, {})
+
   vim.api.nvim_create_user_command("EsqueletoNew", function()
     M.create_template(opts)
   end, {})
 end
 
-return _G
+return M
