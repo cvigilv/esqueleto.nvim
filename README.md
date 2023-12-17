@@ -111,6 +111,7 @@ git clone --depth=1 https://github.com/cvigilv/esqueleto.nvim.git \
 the template directory one must organize its templates making reference to its (i) `filetype`
 or (ii) file name. As an example, let's assume you have the following structure in you
 `~/.config/nvim` directory:
+
 ```
 nvim
 ├── init.lua
@@ -121,11 +122,13 @@ nvim
         ├── default.py
         └── cli.py
 ```
+
 Here, we have a single skeleton directories and two possible triggers for template insertion:
 `python` files and files named `LICENSE`.
 
 To configure and use `esqueleto.nvim`, we need to tell `esqueleto` that we want to trigger
 the insertion for either of this two cases. For that, we add the following to your `init.lua`:
+
 ```lua
 require("esqueleto").setup(
   {
@@ -133,6 +136,7 @@ require("esqueleto").setup(
   }
 )
 ```
+
 With this configuration, one will be prompted with the template insertion whenever an empty
 (i) `python` file type or (ii) file named `LICENSE` are create. This looks as follows:
 
@@ -140,7 +144,8 @@ With this configuration, one will be prompted with the template insertion whenev
 
 ### Extended configuration
 The default options of `esqueleto` are the following:
-~~~lua
+
+```lua
 {
   -- Standard options
   directories = { vim.fn.stdpath("config") .. "/skeletons" }, -- template directories
@@ -174,15 +179,17 @@ The default options of `esqueleto` are the following:
       ["gh-user"] = utils.capture("git config user.name", false),
     },
   },
-  
+
   -- Advanced options
   advanced = {
     ignored = {}, -- List of glob patterns or function that determines if a file is ignored
     ignore_os_files = true, -- whether to ignore OS files (e.g. .DS_Store)
   }
 }
-~~~
+```
+
 For more information regarding `esqueleto.nvim` options, refer to docs (`:h esqueleto`).
+
 
 ### Triggers
 As previously showcased, `esqueleto.nvim` has two types of triggers: (i) file type and (ii) 
@@ -200,35 +207,72 @@ specific than the later. This means that, for example, if one has a named `pytho
 
 This is the intended behavior for `esqueleto`, since one can have, for example, a list of
 templates that match all `python` files and link some of this to trigger exclusively when a
-file with a specific name is found. 
+file with a specific name is found.
 
-The example template directory for this case could be the following: 
+The example template directory for this case could be the following:
+
 ```
-template_dir
+skeletons
+├── LICENSE
+│   └── MIT
 ├── python
-│   ├── script.py
+│   ├── default.py
 │   └── cli.py
-└── script.py
-    └── template.py -> ../python/script.py
+└── cli.py
+    └── template -> ../python/cli.py
 ```
+
 
 ### Wild-cards
 `esqueleto.nvim` supports wild-card expansion for dynamically filling templates with relevant
 information. The current format for wild-cards if the following:
+
 ```
 ${wildcard}
 ```
+
 This wild-cards can be defined by the user under the `lookup` table found in the `wildcards`
 section of the configuration table. This wild-cards can either be (i) static values, e.g.
-strings, numbers, etc., or (ii) functions. Additionally, a special type of wild-cards are 
+strings, numbers, etc., or (ii) functions. Additionally, a special type of wild-cards are
 Lua-based function calls, which have the following structure:
+
 ```
 ${lua:function call}
 ```
+
 For example, 
+
+
+`esqueleto` comes with a series of ready to use wildcards:
+
+- _File related_
+  - `filename`, the current file name
+  - `fileabspath`, the current file absolute path
+  - `filerelpath`, the current file relative path to `$HOME`
+  - `fileext`, the current file extension
+  - `filetype`, the current file type
+
+- _Date and time related_
+  - `date`, current date in YYYYMMDD format
+  - `year`, current year
+  - `month`, current month
+  - `day`, current day
+  - `time`, current time in HH:MM:SS format
+
+- _System related_
+  - `host`, current host name
+  - `user`, current user name
+- Github related
+  - `gh-email`, email of GitHub user
+  - `gh-user`, name of Github user
 
 Additionally, a special wild-cards exists for cursor placement (denoted with `${cursor}`) once
 the template is written in the current buffer.
+> [!WARNING]
+> *DO NOT OVERWRITE THIS WILDCARD*! This wildcard is protected, therefore replacing it in the
+> wildcards look-up table will produce unexpected behaviors.
+
+---
 
 ## Roadmap
 
@@ -237,12 +281,12 @@ I intend on extending this plugin with some functionality I would like for a tem
 manager.
 
 For version 1.0 (currently in development), the following should be implemented:
-- ~Project specific templates~ Multiple template directories support
-- ~Wild-cards~
-  - ~Format spec~
-  - ~Expansion rules
-  - ~User defined wild-cards~
-- Template creation interface
+- [x] ~Project specific templates~ Multiple template directories support
+- [x] Wild-cards
+  - [x] Format spec
+  - [x] Expansion rules
+  - [x] User defined wild-cards
+- [x] Template creation interface
 
 For version 2.0, the following should be implemented:
 - General UI/UX improvements
@@ -251,12 +295,12 @@ For version 2.0, the following should be implemented:
 - User customizable prompt UI
 - User customizable insertion rules
 
+---
+
 ## Contributing
 
-Pull requests are welcomed for improvement of tool and community templates.
-Please contribute using [GitHub Flow](https://guides.github.com/introduction/flow/).
-Create a branch, add commits, and
-[open a pull request](https://github.com/cvigilv/esqueleto.nvim/compare/).
+Pull requests are welcomed for improvement of tool and community templates. Please contribute
+using [GitHub Flow](https://guides.github.com/introduction/flow/). Create a branch, add
+commits, and [open a pull request](https://github.com/cvigilv/esqueleto.nvim/compare/).
 
-Please [open an issue](https://github.com/cvigilv/esqueleto.nvim/issues/new) for
-support.
+Please [open an issue](https://github.com/cvigilv/esqueleto.nvim/issues/new) for support.
