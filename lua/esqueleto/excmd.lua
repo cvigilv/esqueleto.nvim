@@ -14,11 +14,13 @@ M.create_template = function(opts)
       format_item = function(item) return item .. " buffer" end
     },
     function(choice)
+      -- NOTE: This is pretty hacky but works. Basically, we will always populate the template
+      --       file with something, either nothing or the contents of the current buffer.
+      state.source = vim.fn.tempname()
+
+      -- Save current buffer contents to temporal file if template source if current buffer
       if choice == "current" then
-        state.source = vim.fn.tempname()
         vim.cmd("silent w " .. state.source)
-      else
-        state.source = choice
       end
     end
   )
@@ -90,9 +92,7 @@ M.create_template = function(opts)
   local template_buf = vim.api.nvim_create_buf(true, false)
 
   vim.api.nvim_win_set_buf(current_win, template_buf)
-  if state.source ~= "empty" then
-    vim.cmd("0r " .. state.source)
-  end
+  vim.cmd("0r " .. state.source)
   vim.cmd("cd " .. state.directory .. "/" .. state.trigger)
   vim.notify("\nesqueleto :: Exiting template creation!", vim.log.levels.WARN)
 end
