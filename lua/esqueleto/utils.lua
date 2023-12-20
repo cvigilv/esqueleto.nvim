@@ -47,8 +47,8 @@ M.writetemplate = function(file, opts)
     return
   end
 
-  -- Read the file and remove the new line at EOF
-  local content = handler:read("*a"):gsub("\n$", "")
+  -- Read the file, convert EOL to LF and remove the new line at EOF
+  local content = handler:read("*a"):gsub("\r\n?", "\n"):gsub("\n$", "")
 
   local lines, cursor_pos
   if opts.wildcards.expand then
