@@ -67,7 +67,7 @@ M.writetemplate = function(file, opts)
     vim.api.nvim_win_set_cursor(0, cursor_pos)
   else
     -- If not, move the cursor to the last line
-    vim.cmd("norm G")
+    vim.cmd("norm! G")
   end
 end
 
