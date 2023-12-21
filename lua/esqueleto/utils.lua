@@ -35,23 +35,39 @@ end
 ---@param file string Template file path
 ---@param opts table Plugin configuration table
 M.writetemplate = function(file, opts)
-  if file ~= nil and not opts.wildcards.expand then
-    -- Place contents of template directly to buffer
-    vim.cmd("0r " .. file)
-    vim.cmd("norm G")
-  elseif file ~= nil and opts.wildcards.expand then
-    -- Expand wildcards from template and place contents in buffer
-    local content = io.open(file, "r"):read("*a")
-    local parsed_content, cursor_pos = wildcards.parse(content, opts.wildcards.lookup)
-    if content ~= nil then
-      vim.api.nvim_buf_set_lines(0, 0, -1, true, parsed_content)
-    end
-    -- If a cursor wildcard was found, place cursor there
-    if cursor_pos ~= nil then
-      vim.api.nvim_win_set_cursor(0, cursor_pos)
-    else
-      vim.cmd("norm G")
-    end
+  if file == nil then
+    -- Do an early return if no files are specified
+    return
+  end
+
+  local handler, message = io.open(file, "r")
+  if handler == nil then
+    -- Print error message and abort if no file handlers are created
+    vim.notify(message, vim.log.levels.ERROR)
+    return
+  end
+
+  -- Read the file, convert EOL to LF and remove the new line at EOF
+  local content = handler:read("*a"):gsub("\r\n?", "\n"):gsub("\n$", "")
+
+  local lines, cursor_pos
+  if opts.wildcards.expand then
+    -- Place the contents of the file with the wildcards expanded
+    lines, cursor_pos = wildcards.parse(content, opts.wildcards.lookup)
+  else
+    -- ... or place them directly
+    lines = vim.split(content, "\n", { plain = true })
+  end
+
+  -- Replace the buffer with the given lines
+  vim.api.nvim_buf_set_lines(0, 0, -1, true, lines)
+
+  if cursor_pos ~= nil then
+    -- If a cursor wildcard was found, place the cursor there
+    vim.api.nvim_win_set_cursor(0, cursor_pos)
+  else
+    -- If not, move the cursor to the last line
+    vim.cmd("norm! G")
   end
 end
 
