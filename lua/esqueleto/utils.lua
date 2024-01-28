@@ -191,6 +191,7 @@ M.inserttemplate = function(opts)
     elseif vim.tbl_contains(opts.patterns, filetype) then
       pattern = filetype
     end
+    print(pattern)
 
     -- Get templates for selected pattern
     local templates = M.gettemplates(pattern, opts)

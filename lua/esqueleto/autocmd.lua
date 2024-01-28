@@ -11,12 +11,25 @@ M.createautocmd = function(opts)
     { clear = true }
   )
 
+  local function getpatterns()
+    if type(opts.patterns) == "function" then
+      if type(opts.directories) == "table" then
+        return vim.tbl_map(opts.patterns, opts.directories)
+      else
+        return opts.patterns(opts.directories)
+      end
+    else
+      return opts.patterns
+    end
+  end
+  vim.print(getpatterns())
+
   vim.api.nvim_create_autocmd(
     { "BufWinEnter", "BufReadPost", "FileType" },
     {
       group = group,
       desc = "esqueleto.nvim :: Insert template",
-      pattern = opts.patterns,
+      pattern = getpatterns(),
       callback = function()
         local filepath = vim.fn.expand("%")
         local emptyfile = vim.fn.getfsize(filepath) < 4
