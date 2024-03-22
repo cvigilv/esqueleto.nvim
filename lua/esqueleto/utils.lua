@@ -170,7 +170,9 @@ M.selecttemplate = function(templates, opts)
 
   -- Select template
   vim.ui.select(templatenames, { prompt = "Select skeleton to use:" }, function(choice)
-    M.writetemplate(vim.loop.fs_realpath(templates[choice]), opts)
+    if templates[choice] then
+        M.writetemplate(vim.loop.fs_realpath(templates[choice]), opts)
+    end
   end)
 end
 
