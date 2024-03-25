@@ -20,7 +20,7 @@ M.createautocmd = function(opts)
     end
   end
 
-  vim.api.nvim_create_autocmd({ "BufWinEnter", "BufReadPost", "BufNewFile" }, {
+  vim.api.nvim_create_autocmd({ "BufNewFile", "BufReadPost", "FileType" }, {
     group = group,
     desc = "esqueleto.nvim :: Insert template",
     pattern = getpatterns(),
