@@ -10,9 +10,7 @@ M.capture = function(cmd, raw)
   local f = assert(io.popen(cmd, "r"))
   local s = assert(f:read("*a"))
   f:close()
-  if raw then
-    return s
-  end
+  if raw then return s end
   s = string.gsub(s, "^%s+", "")
   s = string.gsub(s, "%s+$", "")
   s = string.gsub(s, "[\n\r]+", "")
@@ -73,33 +71,34 @@ end
 
 -- List ignored files under a directory, given a list of glob patterns
 local listignored = function(dir, ignored_patterns)
-  return vim.tbl_flatten(vim.tbl_map(function(patterns)
-    return vim.fn.globpath(dir, patterns, true, true, true)
-  end, ignored_patterns))
+  return vim.tbl_flatten(
+    vim.tbl_map(
+      function(patterns) return vim.fn.globpath(dir, patterns, true, true, true) end,
+      ignored_patterns
+    )
+  )
 end
 
 -- Returns a ignore checker
 local getignorechecker = function(opts)
   local os_ignore_pats = opts.advanced.ignore_os_files
       and require("esqueleto.constants").ignored_os_patterns
-      or {}
+    or {}
   local extra = opts.advanced.ignored
   local extra_ignore_pats, extra_ignore_func = (function()
     if type(extra) == "function" then
       return {}, extra
     else
       assert(type(extra) == "table")
-      return extra, function(_)
-        return false
-      end
+      return extra, function(_) return false end
     end
   end)()
 
   return function(filepath)
     local dir = vim.fn.fnamemodify(filepath, ":p:h")
     return extra_ignore_func(dir)
-        or vim.tbl_contains(listignored(dir, os_ignore_pats), filepath)
-        or vim.tbl_contains(listignored(dir, extra_ignore_pats), filepath)
+      or vim.tbl_contains(listignored(dir, os_ignore_pats), filepath)
+      or vim.tbl_contains(listignored(dir, extra_ignore_pats), filepath)
   end
 end
 
@@ -111,9 +110,10 @@ M.gettemplates = function(pattern, opts)
   local templates = {}
   local isignored = getignorechecker(opts)
 
-  local alldirectories = vim.tbl_map(function(f)
-    return vim.fn.fnamemodify(f, ":p")
-  end, opts.directories)
+  local alldirectories = vim.tbl_map(
+    function(f) return vim.fn.fnamemodify(f, ":p") end,
+    opts.directories
+  )
 
   -- Count directories that contain templates for pattern
   local ndirs = 0
@@ -131,9 +131,7 @@ M.gettemplates = function(pattern, opts)
         -- Check if pattern is ignored
         if not isignored(filepath) then
           local name = vim.fs.basename(filepath)
-          if ndirs > 1 then
-            name = vim.fn.simplify(directory) .. " :: " .. name
-          end
+          if ndirs > 1 then name = vim.fn.simplify(directory) .. " :: " .. name end
           templates[name] = filepath
         end
       end
@@ -158,9 +156,7 @@ M.selecttemplate = function(templates, opts)
 
   -- Alphabetically sort template names for a more pleasing experience
   local templatenames = vim.tbl_keys(templates)
-  table.sort(templatenames, function(a, b)
-    return a:lower() < b:lower()
-  end)
+  table.sort(templatenames, function(a, b) return a:lower() < b:lower() end)
 
   -- If only one template, write and return early
   if #templatenames == 1 and opts.autouse then
@@ -170,7 +166,11 @@ M.selecttemplate = function(templates, opts)
 
   -- Select template
   vim.ui.select(templatenames, { prompt = "Select skeleton to use:" }, function(choice)
-    M.writetemplate(vim.loop.fs_realpath(templates[choice]), opts)
+    if templates[choice] then
+      M.writetemplate(vim.loop.fs_realpath(templates[choice]), opts)
+    else
+      vim.notify("[esqueleto] No template selected, leaving buffer empty", vim.log.levels.INFO)
+    end
   end)
 end
 
