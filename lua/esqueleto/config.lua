@@ -4,8 +4,8 @@ local M = {}
 
 M.default_config = {
   autouse = true,
-  directories = { vim.fn.stdpath("config") .. "/skeletons" },
-  patterns = {},
+  directories = { vim.fn.stdpath("config") .. "/skeleton" },
+  patterns = function(dir) return vim.fn.readdir(dir) end,
   wildcards = {
     expand = true,
     lookup = {
@@ -48,8 +48,8 @@ M.updateconfig = function(config)
   -- Validate setup
   vim.validate({
     autouse = { config.autouse, 'boolean' },
-    directories = { config.directories, 'table' },
-    patterns = { config.patterns, 'table' },
+    directories = { config.directories, { 'table' } },
+    patterns = { config.patterns, { 'table', 'function' } },
     wildcards = { config.wildcards, "table" },
     advanced = { config.advanced, 'table' },
     ["advanced.ignored"] = { config.advanced.ignored, { 'table', 'function' } },
