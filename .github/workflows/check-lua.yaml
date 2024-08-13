@@ -1,0 +1,33 @@
+---
+name: Linting and style checking
+
+on:
+  - push
+
+jobs:
+  luacheck:
+    name: Luacheck
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Prepare
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y luarocks
+          sudo luarocks install luacheck
+      - name: Lint
+        run: make lint_luacheck
+
+  stylua:
+    name: stylua
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Prepare
+        run: |
+          sudo apt-get update
+          sudo apt install -y nodejs npm
+      - name: Lint
+        run: "make lint_stylua"
+        env:
+          STYLUA: "npx @johnnymorganz/stylua-bin"

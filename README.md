@@ -22,6 +22,7 @@ The plugin provides the following functionality:
 `esqueleto.nvim` requires the following:
 
 - Neovim 0.8+
+<!-- - [plenary.nvim](https://github.com/nvim-lua/plenary.nvim) -- for test -->
 
 Install `esqueleto.nvim` with your preferred package manager:
 
