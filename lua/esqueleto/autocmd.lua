@@ -13,15 +13,10 @@ M.createautocmd = function(opts)
     desc = "esqueleto.nvim :: Insert template",
     pattern = opts.patterns,
     callback = function()
-      if vim.bo.buftype == "nofile" then
-        return nil
-      end
-
+      if vim.bo.buftype == "nofile" then return nil end
       local filepath = vim.fn.expand("%")
       local emptyfile = vim.fn.getfsize(filepath) < 4
-      if emptyfile then
-        utils.inserttemplate(opts)
-      end
+      if emptyfile then utils.inserttemplate(opts) end
     end,
   })
 end

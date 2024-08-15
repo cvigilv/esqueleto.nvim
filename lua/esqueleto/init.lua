@@ -1,8 +1,8 @@
 _G.esqueleto_inserted = {}
 
-local autocmd = require('esqueleto.autocmd')
-local excmd = require('esqueleto.excmd')
-local config = require('esqueleto.config')
+local autocmd = require("esqueleto.autocmd")
+local config = require("esqueleto.config")
+local excmd = require("esqueleto.excmd")
 
 ---@alias Wildcard { [string] : string | fun():string }
 ---@class Wildcards

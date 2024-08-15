@@ -41,7 +41,7 @@ M.writetemplate = function(file, opts)
   local handler, message = io.open(file, "r")
   if handler == nil then
     -- Print error message and abort if no file handlers are created
-    vim.notify(message, vim.log.levels.ERROR)
+    vim.notify(message --[[@as string]], vim.log.levels.ERROR)
     return
   end
 
@@ -80,11 +80,20 @@ local listignored = function(dir, ignored_patterns)
     )
   )
 end
----Returns a ignore checker
----@param advanced Esqueleto.Advanced
----@return fun(filepath:string):boolean
+-- ---List ignored files under a directory, given a list of glob patterns
+-- ---@param dir string
+-- ---@param ignored_patterns string[]
+-- ---@return string[]
+-- local listignore = function(dir, ignored_patterns)
+-- 	return vim.iter(ignored_patterns)
+-- 		:map(function(patterns) return vim.fn.globpath(dir, patterns, true, true, true) end)
+-- 		:flatten()
+-- 		:totable()
+-- end
 
--- Returns a ignore checker
+---Returns a ignore checker
+---@param opts Esqueleto.Config
+---@return fun(filepath:string):boolean
 local getignorechecker = function(opts)
   local os_ignore_pats = opts.advanced.ignore_os_files
       and require("esqueleto.constants").ignored_os_patterns
@@ -112,11 +121,10 @@ end
 ---@param opts Esqueleto.Config Plugin configuration table
 ---@return {[string]:string} templates Available templates for current buffer
 M.gettemplates = function(pattern, opts)
+  ---@type {[string]:string}
   local templates = {}
   local isignored = getignorechecker(opts)
-	---@type {[string]:string}
-	---@type string[]
-
+  ---@type string[]
   local alldirectories = vim.tbl_map(
     function(f) return vim.fn.fnamemodify(f, ":p") end,
     opts.directories
@@ -165,16 +173,17 @@ M.selecttemplate = function(templates, opts)
   local templatenames = vim.tbl_keys(templates)
   table.sort(templatenames, function(a, b) return a:lower() < b:lower() end)
 
+  local uv = vim.loop or vim.uv
   -- If only one template, write and return early
   if #templatenames == 1 and opts.autouse then
-    M.writetemplate(vim.loop.fs_realpath(templates[templatenames[1]]), opts)
+    M.writetemplate(uv.fs_realpath(templates[templatenames[1]])--[[@as string]], opts)
     return nil
   end
 
   -- Select template
   vim.ui.select(templatenames, { prompt = "Select skeleton to use:" }, function(choice)
     if templates[choice] then
-      M.writetemplate(vim.loop.fs_realpath(templates[choice]), opts)
+      M.writetemplate(uv.fs_realpath(templates[choice])--[[@as string]], opts)
     else
       vim.notify("[esqueleto] No template selected, leaving buffer empty", vim.log.levels.INFO)
     end
@@ -190,7 +199,7 @@ M.inserttemplate = function(opts)
   local filetype = vim.bo.filetype
 
   -- Identify if pattern matches user configuration
-  local pattern = nil
+  local pattern = ""
   if not _G.esqueleto_inserted[filepath] then
     -- match either filename or extension. Filename has priority
     if vim.tbl_contains(opts.patterns, filename) then
@@ -201,6 +210,7 @@ M.inserttemplate = function(opts)
 
     -- Get templates for selected pattern
     local templates = M.gettemplates(pattern, opts)
+    -- Identify if pattern matches user configuration
 
     -- Pop-up selection UI
     M.selecttemplate(templates, opts)
