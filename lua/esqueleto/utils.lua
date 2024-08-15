@@ -181,13 +181,15 @@ M.selecttemplate = function(templates, opts)
   end
 
   -- Select template
-  vim.ui.select(templatenames, { prompt = "Select skeleton to use:" }, function(choice)
+
+  -- wrap to coroutine to have possibility to async function
+  ---@see esqueleto.selectors.builtin
+  coroutine.wrap(function()
+    local choice = opts.selector(templatenames)
     if templates[choice] then
-      M.writetemplate(uv.fs_realpath(templates[choice])--[[@as string]], opts)
-    else
-      vim.notify("[esqueleto] No template selected, leaving buffer empty", vim.log.levels.INFO)
+      M.writetemplate(uv.fs_realpath(templates[choice]) --[[@as string]], opts)
     end
-  end)
+  end)()
 end
 
 --- Insert template on current buffer

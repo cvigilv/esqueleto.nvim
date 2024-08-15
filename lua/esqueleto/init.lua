@@ -17,6 +17,7 @@ local excmd = require("esqueleto.excmd")
 ---@field directories string[]  The list of paths in which the search will be performed
 ---@field patterns string[] See: [vim.api.nvim_create_autocmd](lua://vim.api.nvim_create_autocmd)
 ---@field autouse boolean Auto-use a template?
+---@field selector fun( templatenames: string[] ):string? Function that choose some of template
 ---@field wildcards Wildcards
 ---@field advanced Esqueleto.Advanced
 

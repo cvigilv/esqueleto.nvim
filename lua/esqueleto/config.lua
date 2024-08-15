@@ -1,7 +1,8 @@
+local selector = require("esqueleto.selectors.builtin")
 local utils = require("esqueleto.utils")
 local M = {}
 
---@type Esqueleto.Config
+---@type Esqueleto.Config
 M.default_config = {
   autouse = true,
   directories = { vim.fn.stdpath("config") .. "/skeletons" },
@@ -17,21 +18,32 @@ M.default_config = {
       ["filetype"] = function() return vim.bo.filetype end,
 
       -- Date and time
-      ["date"] = function() return os.date("%Y%m%d", os.time()) end,
-      ["year"] = function() return os.date("%Y", os.time()) end,
-      ["month"] = function() return os.date("%m", os.time()) end,
-      ["day"] = function() return os.date("%d", os.time()) end,
-      ["time"] = function() return os.date("%T", os.time()) end,
+      ["date"] = function()
+        return os.date("%Y%m%d", os.time()) --[[@as string]]
+      end,
+      ["year"] = function()
+        return os.date("%Y", os.time()) --[[@as string]]
+      end,
+      ["month"] = function()
+        return os.date("%m", os.time()) --[[@as string]]
+      end,
+      ["day"] = function()
+        return os.date("%d", os.time()) --[[@as string]]
+      end,
+      ["time"] = function()
+        return os.date("%T", os.time()) --[[@as string]]
+      end,
 
       -- System
       ["host"] = utils.capture("hostname", false),
-      ["user"] = os.getenv("USER"),
+      ["user"] = os.getenv("USER") or "USER",
 
       -- Github
       ["gh-email"] = utils.capture("git config user.email", false),
       ["gh-user"] = utils.capture("git config user.name", false),
     },
   },
+  selector = selector,
   advanced = {
     ignored = {},
     ignore_os_files = true,
