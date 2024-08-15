@@ -2,14 +2,14 @@ local M = {}
 
 --- Parse template contents in order to expand wildcards
 ---@param str string String to parse
----@param lookup table Wildcards lookup table
----@return table parsed_str Table containing all lines with wildcards expanded table
----@return table cursor_pos Row-column position tuple of the last cursor wildcard found.
+---@param lookup Wildcard Wildcards lookup table
 M.parse = function(str, lookup)
   local parsedstr = {}
   for _, l in ipairs(vim.split(str, "\n", { plain = true })) do
     for wildcard in l:gmatch("${([^{,^}]+)}") do
       local expansion = nil
+---@return string[] parsed_str Table containing all lines with wildcards expanded table
+---@return nil | [integer, integer] cursor_pos Row-column position tuple of the last cursor wildcard found.
 
       if vim.tbl_contains(vim.tbl_keys(lookup), wildcard) then
         expansion = lookup[wildcard]

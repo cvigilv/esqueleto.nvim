@@ -31,7 +31,7 @@ end
 
 --- Write template contents to current buffer
 ---@param file string Template file path
----@param opts table Plugin configuration table
+---@param opts Esqueleto.Config Plugin configuration table
 M.writetemplate = function(file, opts)
   if file == nil then
     -- Do an early return if no files are specified
@@ -69,7 +69,9 @@ M.writetemplate = function(file, opts)
   end
 end
 
--- List ignored files under a directory, given a list of glob patterns
+--- List ignored files under a directory, given a list of glob patterns
+---Neovim version -10
+---@deprecated
 local listignored = function(dir, ignored_patterns)
   return vim.tbl_flatten(
     vim.tbl_map(
@@ -78,6 +80,9 @@ local listignored = function(dir, ignored_patterns)
     )
   )
 end
+---Returns a ignore checker
+---@param advanced Esqueleto.Advanced
+---@return fun(filepath:string):boolean
 
 -- Returns a ignore checker
 local getignorechecker = function(opts)
@@ -104,11 +109,13 @@ end
 
 --- Get available templates for current buffer
 ---@param pattern string Pattern to use to find templates
----@param opts table Plugin configuration table
----@return table templates Available templates for current buffer
+---@param opts Esqueleto.Config Plugin configuration table
+---@return {[string]:string} templates Available templates for current buffer
 M.gettemplates = function(pattern, opts)
   local templates = {}
   local isignored = getignorechecker(opts)
+	---@type {[string]:string}
+	---@type string[]
 
   local alldirectories = vim.tbl_map(
     function(f) return vim.fn.fnamemodify(f, ":p") end,
@@ -142,8 +149,8 @@ M.gettemplates = function(pattern, opts)
 end
 
 --- Select template to insert on current buffer
----@param templates table Available template table
----@param opts table Plugin configuration table
+---@param templates {[string]:string} Available template table
+---@param opts Esqueleto.Config Plugin configuration table
 M.selecttemplate = function(templates, opts)
   -- Check if templates exist
   if vim.tbl_isempty(templates) then
@@ -175,7 +182,7 @@ M.selecttemplate = function(templates, opts)
 end
 
 --- Insert template on current buffer
----@param opts table Plugin configuration table
+---@param opts Esqueleto.Config Plugin configuration table
 M.inserttemplate = function(opts)
   -- Get pattern alternatives for current file
   local filepath = vim.fn.expand("%:p")
