@@ -69,27 +69,17 @@ M.writetemplate = function(file, opts)
   end
 end
 
---- List ignored files under a directory, given a list of glob patterns
----Neovim version -10
----@deprecated
+---List ignored files under a directory, given a list of glob patterns
+---@param dir string
+---@param ignored_patterns string[]
+---@return string[]
 local listignored = function(dir, ignored_patterns)
-  return vim.tbl_flatten(
-    vim.tbl_map(
-      function(patterns) return vim.fn.globpath(dir, patterns, true, true, true) end,
-      ignored_patterns
-    )
-  )
+  return vim
+    .iter(ignored_patterns)
+    :map(function(patterns) return vim.fn.globpath(dir, patterns, true, true, true) end)
+    :flatten()
+    :totable()
 end
--- ---List ignored files under a directory, given a list of glob patterns
--- ---@param dir string
--- ---@param ignored_patterns string[]
--- ---@return string[]
--- local listignore = function(dir, ignored_patterns)
--- 	return vim.iter(ignored_patterns)
--- 		:map(function(patterns) return vim.fn.globpath(dir, patterns, true, true, true) end)
--- 		:flatten()
--- 		:totable()
--- end
 
 ---Returns a ignore checker
 ---@param opts Esqueleto.Config
