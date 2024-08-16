@@ -175,7 +175,7 @@ M.selecttemplate = function(templates, opts)
   -- wrap to coroutine to have possibility to async function
   ---@see esqueleto.selectors.builtin
   coroutine.wrap(function()
-    local choice = opts.selector(templatenames)
+    local choice = opts.selector(templates)
     if templates[choice] then
       M.writetemplate(uv.fs_realpath(templates[choice]) --[[@as string]], opts)
     end
