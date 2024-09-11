@@ -24,12 +24,12 @@ M.default_config = {
       ["time"] = function() return os.date("%T", os.time()) end,
 
       -- System
-      ["host"] = utils.capture("hostname", false),
-      ["user"] = os.getenv("USER"),
+      ["host"] = function() return utils.capture("hostname", false) end,
+      ["user"] = function() return os.getenv("USER") end,
 
       -- Github
-      ["gh-email"] = utils.capture("git config user.email", false),
-      ["gh-user"] = utils.capture("git config user.name", false),
+      ["gh-email"] = function() return utils.capture("git config user.email", false) end,
+      ["gh-user"] = function() return utils.capture("git config user.name", false) end,
     },
   },
   advanced = {
