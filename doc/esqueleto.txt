@@ -115,26 +115,57 @@ python:~
                                                                    *functions*
 
                                                            *esqueleto.setup()*
-setup({patterns}, {directory})
+setup({config})
 
-    Setup for specific file {patterns} using the templates inside a
-    given {directory}.
+    Setup the plugin using the given {config} table.
 
     Defaults: >
-        esqueleto.setup(
-            {
-                directories = {vim.fn.stdpath("config") .. "/skeletons"},
-                patterns = { },
-                advanced = { ignore = {}, ignore_os_files = true },
-            }
-        )
+        {
+          autouse = true,
+          directories = { vim.fn.stdpath("config") .. "/skeletons" },
+          patterns = function(dir) return vim.fn.readdir(dir) end,
+          wildcards = {
+            expand = true,
+            lookup = {
+              -- File
+              ["filename"] = function() return vim.fn.expand("%:t:r") end,
+              ["fileabspath"] = function() return vim.fn.expand("%:p") end,
+              ["filerelpath"] = function() return vim.fn.expand("%:p:~") end,
+              ["fileext"] = function() return vim.fn.expand("%:e") end,
+              ["filetype"] = function() return vim.bo.filetype end,
+
+              -- Date and time
+              ["date"] = function() return os.date("%Y%m%d", os.time()) end,
+              ["year"] = function() return os.date("%Y", os.time()) end,
+              ["month"] = function() return os.date("%m", os.time()) end,
+              ["day"] = function() return os.date("%d", os.time()) end,
+              ["time"] = function() return os.date("%T", os.time()) end,
+
+              -- System
+              ["host"] = function() return utils.capture("hostname", false) end,
+              ["user"] = function() return os.getenv("USER") end,
+
+              -- Github
+              ["gh-email"] = function() return utils.capture("git config user.email", false) end,
+              ["gh-user"] = function() return utils.capture("git config user.name", false) end,
+            },
+          },
+          advanced = { ignored = {}, ignore_os_files = true },
+        }
 <
 
     Parameters: ~
-      • {patterns}  (table) File names or patterns to match
-      • {directory} (string) An absolute or relative path to the directory
-                    with templates.
-      • {advanced}  (table) Advanced options, including:
+      • {autouse}     (boolean) Whether to auto-use a template if it's the only
+                      one for a pattern.
+      • {directories} (table) An absolute or relative path to the directories
+                      with templates.
+      • {patterns}    (table) File names or patterns to match. File name
+                      trigger has priority.
+      • {wildcards}   (table) Wildcards options, including:
+                    • {expand}          (boolean) Whether to expand
+                                        wild-cards.
+                    • {lookup}          (table) Wild-cards look-up table.
+      • {advanced}    (table) Advanced options, including:
                     • {ignore}          (table|function) List of glob patterns of
                                         files to be ignored; alternatively, a
                                         predicate that determines if a file
@@ -148,11 +179,14 @@ setup({patterns}, {directory})
                                                                  *ex-commands*
 
                                                                    *Esqueleto*
-Esqueleto
+EsqueletoInsert
 
     Prompt template insertion for current file, prioritizing patterns matching
     over file name then over file type.
 
+EsqueletoNew
+
+    Prompt template creation for current file.
 
 ==============================================================================
                                                                    *changelog*

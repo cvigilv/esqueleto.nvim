@@ -5,7 +5,7 @@ Reduce your boilerplate code the lazy-bones way.
 ## What is `esqueleto`?
 
 <p align="center">
-  <img width="66%" src="https://github.com/cvigilv/esqueleto.nvim/assets/30091515/f3b783f2-2da8-49ae-9ac1-96141bb0b00b">  
+  <img width="66%" src="https://github.com/cvigilv/esqueleto.nvim/assets/30091515/f3b783f2-2da8-49ae-9ac1-96141bb0b00b">
 </p>
 
 `esqueleto.nvim` is a lua-based plugin that intends to make the use of templates
@@ -154,7 +154,7 @@ The default options of `esqueleto` are the following:
   autouse = true, -- whether to auto-use a template if it's the only one for a pattern
 
   -- Wild-card options
-  wildcards = {  
+  wildcards = {
     expand = true, -- whether to expand wild-cards
     lookup = { -- wild-cards look-up table
       -- File-specific
@@ -193,7 +193,7 @@ For more information regarding `esqueleto.nvim` options, refer to docs (`:h esqu
 
 
 ### Triggers
-As previously showcased, `esqueleto.nvim` has two types of triggers: (i) file type and (ii) 
+As previously showcased, `esqueleto.nvim` has two types of triggers: (i) file type and (ii)
 file name triggers. This correspond to the backbone of `esqueleto`, therefore is essential to
 correctly understand how the plugin works for proper creation and organization of templates.
 
@@ -221,7 +221,7 @@ require("esqueleto").setup(
 )
 ```
 
-Then, instead of creating a new file, we will create a softlink to the template we already 
+Then, instead of creating a new file, we will create a softlink to the template we already
 have in the `python` directory. From this, we should obtain the following structure:
 
 ```
@@ -239,7 +239,7 @@ and now we will trigger template insertion for empty (i) `python` type, (ii) `LI
 (iii) `cli.py` named files:
 
 <p align="center">
-  <img width="66%" src="https://github.com/cvigilv/esqueleto.nvim/assets/30091515/2bc174ca-7a76-4776-8d51-2fd1941091a1">  
+  <img width="66%" src="https://github.com/cvigilv/esqueleto.nvim/assets/30091515/2bc174ca-7a76-4776-8d51-2fd1941091a1">
 </p>
 
 Finally, the command `EsqueletoNew` provides of a user-friendly way for creating new
