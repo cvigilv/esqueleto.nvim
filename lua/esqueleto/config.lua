@@ -4,7 +4,7 @@ local M = {}
 
 M.default_config = {
   autouse = true,
-  directories = { vim.fn.stdpath("config") .. "/skeleton" },
+  directories = { vim.fn.stdpath("config") .. "/skeletons" },
   patterns = function(dir) return vim.fn.readdir(dir) end,
   wildcards = {
     expand = true,

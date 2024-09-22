@@ -42,7 +42,7 @@ To setup |esqueleto|, tow things must be done:
 First, |esqueleto| setup in the `init.lua` file is as follows: >
     require('esqueleto').setup({
           -- Default templates directory
-          directories = { '~/.config/nvim/skeleton/' },
+          directories = { '~/.config/nvim/skeletons/' },
 
           -- Patterns to detect for template insetion (empty by default,
           -- adding as an example)
@@ -75,7 +75,7 @@ steps:
 
 Based in the example seen above, the tree structure of our template directory
 should be: >
-    ~/.config/nvim/skeleton/
+    ~/.config/nvim/skeletons/
     ├── LICENSE
     ├── README.md
     └── python
