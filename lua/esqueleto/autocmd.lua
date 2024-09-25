@@ -8,6 +8,7 @@ M.createautocmd = function(opts)
   -- create autocommands for skeleton insertion
   local group = vim.api.nvim_create_augroup("esqueleto", { clear = true })
 
+  -- If patterns is not a list, generate it from the directories and pattern function
   if type(opts.patterns) == "function" then
     if type(opts.directories) == "table" then
       opts.patterns = vim
