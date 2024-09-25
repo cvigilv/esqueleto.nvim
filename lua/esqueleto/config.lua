@@ -8,12 +8,16 @@ local utils = require("esqueleto.utils")
 ---@field autouse boolean Automatically use templates if its the only one available
 ---@field directories string[] Directories to search for templates
 ---@field patterns function Function to get patterns from a directory
----@field wildcards table Configuration for wildcard expansion
----@field wildcards.expand boolean Enable wildcard expansion
----@field wildcards.lookup table<string, function> Lookup table for wildcard functions
----@field advanced table Advanced configuration options
----@field advanced.ignored string[] Ignored files or patterns
----@field advanced.ignore_os_files boolean Ignore OS-specific files
+---@field wildcards Esqueleto.WildcardConfig Configuration for wildcard expansion
+---@field advanced Esqueleto.AdvancedConfig Advanced configuration options
+---
+---@class Esqueleto.WildcardConfig
+---@field expand boolean Enable wildcard expansion
+---@field lookup table<string, function> Lookup table for wildcard functions
+
+---@class Esqueleto.AdvancedConfig
+---@field ignored string[] Ignored files or patterns
+---@field ignore_os_files boolean Ignore OS-specific files
 
 ---@type Esqueleto.Config
 local defaults = {
