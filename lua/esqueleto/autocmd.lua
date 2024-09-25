@@ -8,22 +8,22 @@ M.createautocmd = function(opts)
   -- create autocommands for skeleton insertion
   local group = vim.api.nvim_create_augroup("esqueleto", { clear = true })
 
-  local function getpatterns()
-    if type(opts.patterns) == "function" then
-      if type(opts.directories) == "table" then
-        return vim.tbl_map(opts.patterns, opts.directories)
-      else
-        return opts.patterns(opts.directories)
-      end
+  if type(opts.patterns) == "function" then
+    if type(opts.directories) == "table" then
+      opts.patterns = vim
+        .iter(opts.directories)
+        :map(function(dir) return opts.patterns(dir) end)
+        :flatten()
+        :totable()
     else
-      return opts.patterns
+      opts.patterns = opts.patterns(opts.directories)
     end
   end
 
   vim.api.nvim_create_autocmd({ "BufNewFile", "BufReadPost", "FileType" }, {
     group = group,
     desc = "esqueleto.nvim :: Insert template",
-    pattern = getpatterns(),
+    pattern = opts.patterns,
     callback = function()
       if vim.bo.buftype == "nofile" then return nil end
       local filepath = vim.fn.expand("%")
