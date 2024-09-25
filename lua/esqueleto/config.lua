@@ -48,7 +48,7 @@ M.updateconfig = function(config)
   -- Validate setup
   vim.validate({
     autouse = { config.autouse, "boolean" },
-    directories = { config.directories, { "table" } },
+    directories = { config.directories, { "table", "string" } },
     patterns = { config.patterns, { "table", "function" } },
     wildcards = { config.wildcards, "table" },
     advanced = { config.advanced, "table" },
