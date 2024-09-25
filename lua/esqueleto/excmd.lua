@@ -2,6 +2,9 @@ local M = {}
 
 local utils = require("esqueleto.utils")
 
+---Creates a new template based on user input and current buffer state.
+---@param opts Esqueleto.Config Configuration options for template creation
+---@return nil
 M.create_template = function(opts)
   vim.notify("\nesqueleto :: Entering template creation!", vim.log.levels.WARN)
   local state = {}
@@ -101,7 +104,7 @@ M.create_template = function(opts)
 end
 
 --- Create excommands for `esqueleto.nvim`
----@param opts table Plugin configuration table
+---@param opts Esqueleto.Config Plugin configuration table
 M.createexcmd = function(opts)
   -- create ex-command for on-demand use
   vim.api.nvim_create_user_command("EsqueletoInsert", function()
