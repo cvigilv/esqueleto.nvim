@@ -13,7 +13,7 @@ local utils = require("esqueleto.utils")
 ---
 ---@class Esqueleto.WildcardConfig
 ---@field expand boolean Enable wildcard expansion
----@field lookup table<string, function> Lookup table for wildcard functions
+---@field lookup table<string, function|string> Lookup table for wildcard functions
 
 ---@class Esqueleto.AdvancedConfig
 ---@field ignored string[] Ignored files or patterns
