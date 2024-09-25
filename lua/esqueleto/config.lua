@@ -10,7 +10,7 @@ local utils = require("esqueleto.utils")
 ---@field patterns function Function to get patterns from a directory
 ---@field wildcards Esqueleto.WildcardConfig Configuration for wildcard expansion
 ---@field advanced Esqueleto.AdvancedConfig Advanced configuration options
----
+
 ---@class Esqueleto.WildcardConfig
 ---@field expand boolean Enable wildcard expansion
 ---@field lookup table<string, function|string> Lookup table for wildcard functions
@@ -69,7 +69,7 @@ M.update_config = function(config)
   -- Validate setup
   vim.validate({
     ["autouse"] = { config.autouse, "boolean" },
-    ["directories"] = { config.directories, { "table" } },
+    ["directories"] = { config.directories, { "table", "string" } },
     ["patterns"] = { config.patterns, { "table", "function" } },
     ["wildcards"] = { config.wildcards, "table" },
     ["wildcards.expand"] = { config.wildcards.expand, "boolean" },
