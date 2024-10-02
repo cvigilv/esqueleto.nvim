@@ -176,6 +176,7 @@ M.selecttemplate = function(templates, opts)
   ---@see esqueleto.selectors.builtin
   coroutine.wrap(function()
     local choice = opts.selector(templates)
+    vim.ui.input({prompt = choice }, function(input) vim.print(input) end)
     if templates[choice] then
       M.writetemplate(uv.fs_realpath(templates[choice]) --[[@as string]], opts)
     end

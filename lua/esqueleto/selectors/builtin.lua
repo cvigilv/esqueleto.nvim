@@ -9,7 +9,7 @@ return function(templates)
     coroutine.resume(co, choice)
   end
   -- I don't know reason to use that
-  -- choicer = vim.schedule_wrap(choicer)
+  choicer = vim.schedule_wrap(choicer)
   vim.ui.select(vim.tbl_keys(templates), { prompt = "Select skeleton to use:" }, choicer)
   return coroutine.yield()
 end
