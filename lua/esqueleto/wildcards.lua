@@ -30,9 +30,7 @@ M.parse = function(str, lookup)
   local cursor_pos = nil
   for row, l in ipairs(parsedstr) do
     local col, _ = string.find(l, "${cursor}")
-    if col ~= nil then
-      cursor_pos = {row, col}
-    end
+    if col ~= nil then cursor_pos = { row, col } end
     parsedstr[row] = parsedstr[row]:gsub("${cursor}", "")
   end
 
