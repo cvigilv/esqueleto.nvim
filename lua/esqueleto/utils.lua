@@ -184,7 +184,9 @@ function M.builtin_finder(templates, opts)
     end
   end)
 end
-
+---@param templates {[string]:string}
+---@param opts table
+---@return nil
 function M.telescope_finder(templates, opts)
   local telescope_exist, pickers = pcall(require, "telescope_pickers")
   if not telescope_exist then
@@ -208,7 +210,7 @@ function M.telescope_finder(templates, opts)
             value = entry,
             display = entry,
             ordinal = entry,
-            filename = templates[templatenames],
+            filename = templates[entry],
           }
         end,
       }),
@@ -217,7 +219,7 @@ function M.telescope_finder(templates, opts)
         actions.select_default:replace(function()
           actions.close(prompt_bufnr)
           local selection = action_state.get_selected_entry()
-          M.writetemplate(selection.filename, opts)
+          M.writetemplate(vim.loop.fs_realpath(templates[selection.value]), opts)
         end)
         return true
       end,
