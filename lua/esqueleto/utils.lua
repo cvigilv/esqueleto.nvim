@@ -212,7 +212,7 @@ function M.telescope_finder(templates, opts)
           }
         end,
       }),
-      sorter = _TelescopeConfigurationValues.generic_sorcer({}),
+      sorter = _TelescopeConfigurationValues.generic_sorter({}),
       attach_mappings = function(prompt_bufnr)
         actions.select_default:replace(function()
           actions.close(prompt_bufnr)
