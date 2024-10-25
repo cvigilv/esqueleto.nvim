@@ -21,7 +21,7 @@ The plugin provides the following functionality:
 ## Installation
 `esqueleto.nvim` requires the following:
 
-- Neovim 0.8+
+- Neovim 0.10+
 
 Install `esqueleto.nvim` with your preferred package manager:
 
