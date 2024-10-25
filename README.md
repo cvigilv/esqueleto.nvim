@@ -21,7 +21,7 @@ The plugin provides the following functionality:
 ## Installation
 `esqueleto.nvim` requires the following:
 
-- Neovim 0.8+
+- Neovim 0.10+
 
 Install `esqueleto.nvim` with your preferred package manager:
 
@@ -147,13 +147,31 @@ replicate the behavior seen in the video introduction.
 The default options of `esqueleto` are the following:
 
 ```lua
+---@class Esqueleto.Config
+---@field autouse boolean Automatically use templates if its the only one available
+---@field directories string|table<string> Directory or directories to search for templates
+---@field patterns function|table<string> Function to get patterns from a directory or list of patterns
+---@field wildcards Esqueleto.WildcardConfig Wildcard configuration options
+---@field advanced Esqueleto.AdvancedConfig Advanced configuration options
+
+---@class Esqueleto.WildcardConfig
+---@field expand boolean Enable wildcard expansion
+---@field lookup table<string, function|string> Lookup table for wildcards
+
+---@class Esqueleto.AdvancedConfig
+---@field ignored function|table<string> File patterns to ignore template insertion
+---@field ignore_os_files boolean Ignore OS-specific files
+
+---@type Esqueleto.Config
 {
   -- Standard options
-  directories = { vim.fn.stdpath("config") .. "/skeletons" }, -- template directories
-  patterns = { }, -- trigger patterns for file creation, file name trigger has priority
   autouse = true, -- whether to auto-use a template if it's the only one for a pattern
+  directories = { vim.fn.stdpath("config") .. "/skeletons" }, -- template directories
+  patterns = function(dir) return vim.fn.readdir(dir) end, -- trigger patterns for file creation,
+                                                           -- file name trigger has priority
 
   -- Wild-card options
+  ---@type Esqueleto.WildcardConfig
   wildcards = {
     expand = true, -- whether to expand wild-cards
     lookup = { -- wild-cards look-up table
@@ -182,6 +200,7 @@ The default options of `esqueleto` are the following:
   },
 
   -- Advanced options
+  ---@type Esqueleto.AdvancesConfig
   advanced = {
     ignored = {}, -- List of glob patterns or function that determines if a file is ignored
     ignore_os_files = true, -- whether to ignore OS files (e.g. .DS_Store)
