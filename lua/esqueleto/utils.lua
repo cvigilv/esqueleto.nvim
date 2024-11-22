@@ -17,18 +17,6 @@ M.capture = function(cmd, raw)
   return s
 end
 
---- Map function over each entry in table
----@param tbl table Table to map
----@param f function Function to map
----@return table mapped_tbl Function-mapped table
-M.map = function(tbl, f)
-  local t = {}
-  for k, v in pairs(tbl) do
-    t[k] = f(v)
-  end
-  return t
-end
-
 --- Write template contents to current buffer
 ---@param file string Template file path
 ---@param opts Esqueleto.Config Plugin configuration table
