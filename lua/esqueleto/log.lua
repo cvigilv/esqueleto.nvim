@@ -43,7 +43,7 @@
 -- User configuration section
 local default_config = {
   -- Name of the plugin. Prepended to log messages.
-  plugin = "esqueleto.nvim",
+  plugin = "esqueleto_nvim",
 
   -- Should print the output to neovim while running.
   -- values: 'sync','async',false
@@ -55,10 +55,6 @@ local default_config = {
   -- Should write to a file.
   -- Default output for logging file is `stdpath("cache")/plugin`.
   use_file = true,
-
-  -- Output file has precedence over plugin, if not nil.
-  -- Used for the logging file, if not nil and use_file == true.
-  outfile = nil,
 
   -- Should write to the quickfix list.
   use_quickfix = true,
@@ -105,10 +101,7 @@ local unpack = unpack or table.unpack
 log.new = function(config, standalone)
   config = vim.tbl_deep_extend("force", default_config, config)
 
-  local outfile = vim.F.if_nil(
-    config.outfile,
-    vim.fs.joinpath(vim.fn.stdpath("cache"), config.plugin .. ".log")
-  )
+  local outfile = vim.fs.joinpath(vim.fn.stdpath("cache"), config.plugin .. ".log")
 
   local obj
   if standalone then
@@ -243,8 +236,6 @@ log.new = function(config, standalone)
 
   return obj
 end
-
-log.new(default_config, true)
 -- }}}
 
 return log

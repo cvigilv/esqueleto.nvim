@@ -18,6 +18,7 @@ local utils = require("esqueleto.utils")
 ---@class Esqueleto.AdvancedConfig
 ---@field ignored function|table<string> File patterns to ignore template insertion
 ---@field ignore_os_files boolean Ignore OS-specific files
+---@field logging table Logging options
 
 ---@type Esqueleto.Config
 local defaults = {
@@ -53,6 +54,12 @@ local defaults = {
   advanced = {
     ignored = {},
     ignore_os_files = true,
+    logging = {
+      use_console = false, -- Whether to print the output to neovim while running (one of 'sync','async' or false)
+      use_file = true, -- Hwther to write logs to a file (`stdpath("cache")/esqueleto_nvim.log`)
+      use_quickfix = true, -- Whether to write logs to the quickfix list
+      level = "trace", -- Any messages above this level will be logged (one of "trace", "debug", "info", "warn", "error" or "fatal")
+    },
   },
 }
 
@@ -77,7 +84,18 @@ M.update_config = function(config)
     ["advanced"] = { config.advanced, "table" },
     ["advanced.ignored"] = { config.advanced.ignored, { "table", "function" } },
     ["advanced.ignore_os_files"] = { config.advanced.ignore_os_files, "boolean" },
+    ["advanced.logging.use_console"] = {
+      config.advanced.logging.use_console,
+      { "string", "boolean" },
+    },
+    ["advanced.logging.use_file"] = { config.advanced.logging.use_file, { "boolean" } },
+    ["advanced.logging.use_quickfix"] = { config.advanced.logging.use_quickfix, { "boolean" } },
+    ["advanced.logging.level"] = { config.advanced.logging.level, { "string" } },
   })
+
+  -- Add logging function
+  config.advanced.logging.func = require("esqueleto.log").new(config.advanced.logging, true)
+  config.advanced.logging.func.info("Updated default configuration with user options.")
 
   return config
 end
