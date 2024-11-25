@@ -182,6 +182,10 @@ M.inserttemplate = function(opts)
   local filename = vim.fn.expand("%:t")
   local filetype = vim.bo.filetype
 
+  --- not ideal... but stops the confusing behavior
+  local ignore_this_buffer = filepath:find("^fugitive://") ~= nil
+  if ignore_this_buffer then return nil end
+
   -- Identify if pattern matches user configuration
   local pattern
   if not _G.esqueleto_inserted[filepath] then
