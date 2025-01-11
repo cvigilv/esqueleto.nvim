@@ -2,6 +2,7 @@
 
 local eq = assert.are.same
 local is_true = assert.is.True
+local throws_error = assert.has.errors
 
 describe("`createautocmd`", function()
   -- Setup environment for tests
@@ -68,5 +69,25 @@ describe("`createautocmd`", function()
       is_true(vim.tbl_contains(expected_patterns, cmd["pattern"], {}))
       is_true(vim.tbl_contains(expected_events, cmd["event"], {}))
     end
+  end)
+
+  it("should skip autocommand creation", function()
+    opts.patterns = "*"
+    autocmds.createautocmd(opts)
+    vim.print(opts)
+
+    -- Observed behaviour
+    local group_name = "esqueleto"
+    local existing_autocmds = vim.api.nvim_get_autocmds({
+      group = group_name,
+    })
+
+    -- Check if observed is expected
+    is_true(#existing_autocmds == 0)
+  end)
+
+  it("should should throw error for patterns found", function()
+    opts.patterns = {}
+    throws_error(autocmds.createautocmd(opts))
   end)
 end)

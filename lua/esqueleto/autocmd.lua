@@ -20,6 +20,15 @@ M.createautocmd = function(opts)
     end
   end
 
+  -- Skip if (i) no patterns where found or (ii) trying to run always.
+  -- NOTE: This patterns are incompatible with the plugin in it's current state, since it
+  -- doesn't have a way to merge templates from different patterns.
+  if opts.patterns == {} or opts.patterns == "*" then
+    vim.api.nvim_err_write(
+      "Pattern `" .. opts.patterns .. "` is incompatible with esqueleto.nvim"
+    )
+  end
+
   vim.api.nvim_create_autocmd({ "BufNewFile", "BufReadPost", "FileType" }, {
     group = group,
     desc = "esqueleto.nvim :: Insert template",
