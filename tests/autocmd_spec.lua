@@ -1,14 +1,19 @@
 ---@diagnostic disable: undefined-global, lowercase-global, undefined-field
 
 local eq = assert.are.same
+local is_true = assert.is.True
 
-describe("createautocmd", function()
+describe("`createautocmd`", function()
   -- Setup environment for tests
   before_each(function()
-    local opts = {
+    opts = {
       autouse = true,
-      directories = { vim.fn.stdpath("config") .. "/skeletons" },
-      patterns = function(dir) return vim.fn.readdir(dir) end,
+      directories = {
+        vim.fn.resolve(
+          vim.fn.fnamemodify(vim.fn.getcwd() .. "/" .. "../scripts/skeletons", ":p")
+        ),
+      },
+      patterns = { "lua", "README" },
       wildcards = {
         expand = true,
         lookup = {
@@ -41,19 +46,27 @@ describe("createautocmd", function()
       },
     }
 
-    autocmds = require("esqueleto.autocmd").createautocmd(opts)
+    autocmds = require("esqueleto.autocmd")
   end)
 
-  it("should createa autocmds", function()
+  it("should create autocmds", function()
+    autocmds.createautocmd(opts)
+
     -- Expected behaviour
+    expected_events = { "BufNewFile", "BufReadPost", "FileType" }
+    expected_patterns = { "lua", "README" }
+
+    -- Observed behaviour
     local group_name = "esqueleto"
     local existing_autocmds = vim.api.nvim_get_autocmds({
       group = group_name,
     })
-    vim.print(existing_autocmds)
 
-    -- Observed behaviour
-
-    eq(true == true) -- Check if behaviours are equal
+    -- Check if observed and expected behaviours are equal
+    for _, cmd in ipairs(existing_autocmds) do
+      eq(cmd["group_name"], group_name)
+      is_true(vim.tbl_contains(expected_patterns, cmd["pattern"], {}))
+      is_true(vim.tbl_contains(expected_events, cmd["event"], {}))
+    end
   end)
 end)
