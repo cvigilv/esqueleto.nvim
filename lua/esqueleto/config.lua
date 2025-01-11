@@ -2,8 +2,6 @@
 ---@author Carlos Vigil-Vásquez
 ---@license MIT
 
-local utils = require("esqueleto.utils")
-
 ---@class Esqueleto.Config
 ---@field autouse boolean Automatically use templates if its the only one available
 ---@field directories string|table<string> Directory or directories to search for templates
@@ -15,10 +13,14 @@ local utils = require("esqueleto.utils")
 ---@field expand boolean Enable wildcard expansion
 ---@field lookup table<string, function|string> Lookup table for wildcards
 
+---@class Esqueleto.Advanced.IgnoreRulesConfig
+---@field templates table Options related to template ignoring
+---@field filenames table<string> File name patterns to ignore
+---@field filetypes table<string> File type patterns to ignore
+
 ---@class Esqueleto.AdvancedConfig
----@field ignored function|table<string> File patterns to ignore template insertion
----@field ignore_os_files boolean Ignore OS-specific files
 ---@field logging table Logging options
+---@field ignore_rules Esqueleto.Advanced.IgnoreRulesConfig Ignore rules options
 
 ---@type Esqueleto.Config
 local defaults = {
@@ -27,37 +29,22 @@ local defaults = {
   patterns = function(dir) return vim.fn.readdir(dir) end,
   wildcards = {
     expand = true,
-    lookup = {
-      -- File
-      ["filename"] = function() return vim.fn.expand("%:t:r") end,
-      ["fileabspath"] = function() return vim.fn.expand("%:p") end,
-      ["filerelpath"] = function() return vim.fn.expand("%:p:~") end,
-      ["fileext"] = function() return vim.fn.expand("%:e") end,
-      ["filetype"] = function() return vim.bo.filetype end,
-
-      -- Date and time
-      ["date"] = function() return os.date("%Y%m%d", os.time()) end,
-      ["year"] = function() return os.date("%Y", os.time()) end,
-      ["month"] = function() return os.date("%m", os.time()) end,
-      ["day"] = function() return os.date("%d", os.time()) end,
-      ["time"] = function() return os.date("%T", os.time()) end,
-
-      -- System
-      ["host"] = function() return utils.capture("hostname", false) end,
-      ["user"] = function() return os.getenv("USER") end,
-
-      -- Github
-      ["gh-email"] = function() return utils.capture("git config user.email", false) end,
-      ["gh-user"] = function() return utils.capture("git config user.name", false) end,
-    },
+    lookup = require("esqueleto.helpers.wildcards").builtin,
   },
   advanced = {
-    ignored = {},
-    ignore_os_files = true,
+    ignore_rules = {
+      templates = {
+        include_os_files = true,
+        extras = {},
+      },
+      filenames = {},
+      filetypes = {},
+    },
+
     logging = {
       use_console = false, -- Whether to print the output to neovim while running (one of 'sync','async' or false)
       use_file = true, -- Hwther to write logs to a file (`stdpath("cache")/esqueleto_nvim.log`)
-      use_quickfix = true, -- Whether to write logs to the quickfix list
+      use_quickfix = false, -- Whether to write logs to the quickfix list
       level = "trace", -- Any messages above this level will be logged (one of "trace", "debug", "info", "warn", "error" or "fatal")
     },
   },
@@ -82,8 +69,20 @@ M.update_config = function(config)
     ["wildcards.expand"] = { config.wildcards.expand, "boolean" },
     ["wildcards.lookup"] = { config.wildcards.lookup, "table" },
     ["advanced"] = { config.advanced, "table" },
-    ["advanced.ignored"] = { config.advanced.ignored, { "table", "function" } },
-    ["advanced.ignore_os_files"] = { config.advanced.ignore_os_files, "boolean" },
+
+    ["advanced.ignore_rules"] = { config.advanced.ignore_rules, "table" },
+    ["advanced.ignore_rules.templates"] = { config.advanced.ignore_rules.templates, "table" },
+    ["advanced.ignore_rules.templates.include_os_files"] = {
+      config.advanced.ignore_rules.templates.include_os_files,
+      "boolean",
+    },
+    ["advanced.ignore_rules.templates.extras"] = {
+      config.advanced.ignore_rules.templates.extras,
+      { "function", "table" },
+    },
+    ["advanced.ignore_rules.filenames"] = { config.advanced.ignore_rules.filenames, "table" },
+    ["advanced.ignore_rules.filetypes"] = { config.advanced.ignore_rules.filetypes, "table" },
+
     ["advanced.logging.use_console"] = {
       config.advanced.logging.use_console,
       { "string", "boolean" },

@@ -1,4 +1,4 @@
-local utils = require("esqueleto.utils")
+local utils = require("esqueleto.core")
 
 local M = {}
 
