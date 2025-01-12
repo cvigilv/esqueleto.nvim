@@ -1,4 +1,4 @@
-local wildcards = require("esqueleto.helpers.wildcards"
+local wildcards = require("esqueleto.helpers.wildcards")
 
 local M = {}
 
@@ -81,7 +81,7 @@ end
 -- Returns a ignore checker
 local getignorechecker = function(opts)
   local os_ignore_pats = opts.advanced.ignore_os_files
-      and require("esqueleto.constants").ignored_os_patterns
+      and require("esqueleto.helpers.constants").ignored_os_patterns
     or {}
   local extra = opts.advanced.ignored
   local extra_ignore_pats, extra_ignore_func = (function()

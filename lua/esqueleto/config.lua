@@ -2,7 +2,7 @@
 ---@author Carlos Vigil-Vásquez
 ---@license MIT
 
-local utils = require("esqueleto.utils")
+local utils = require("esqueleto.core")
 
 ---@class Esqueleto.Config
 ---@field autouse boolean Automatically use templates if its the only one available

@@ -1,6 +1,6 @@
 local M = {}
 
-local utils = require("esqueleto.utils")
+local utils = require("esqueleto.core")
 
 ---Creates a new template based on user input and current buffer state.
 ---@param opts Esqueleto.Config Configuration options for template creation
