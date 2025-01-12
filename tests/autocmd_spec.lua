@@ -2,8 +2,6 @@
 
 local eq = assert.are.same
 local is_true = assert.is.True
-local is_false = assert.is_not.True
-local throws_error = assert.has.errors
 
 describe("`createautocmd`", function()
   bufnr = vim.api.nvim_get_current_buf()
