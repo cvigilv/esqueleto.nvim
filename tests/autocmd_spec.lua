@@ -2,18 +2,17 @@
 
 local eq = assert.are.same
 local is_true = assert.is.True
+local is_false = assert.is_not.True
 local throws_error = assert.has.errors
 
 describe("`createautocmd`", function()
+  bufnr = vim.api.nvim_get_current_buf()
+
   -- Setup environment for tests
   before_each(function()
     opts = {
       autouse = true,
-      directories = {
-        vim.fn.resolve(
-          vim.fn.fnamemodify(vim.fn.getcwd() .. "/" .. "../scripts/skeletons", ":p")
-        ),
-      },
+      directories = { "." },
       patterns = { "lua", "README" },
       wildcards = {
         expand = true,
@@ -50,6 +49,26 @@ describe("`createautocmd`", function()
     autocmds = require("esqueleto.autocmd")
   end)
 
+  it("should throw the error when pattern is empty table", function()
+    opts.patterns = {}
+
+    assert.has_error(
+      function() autocmds.createautocmd(opts) end,
+      "Empty pattern (`pattern={}`) is incompatible with esqueleto.nvim"
+    )
+    is_true(#vim.api.nvim_get_autocmds({ group = "esqueleto" }) == 0) -- Check autocmds
+  end)
+
+  it("should throw the error when pattern is glob (*)", function()
+    opts.patterns = "*"
+
+    assert.has_error(
+      function() autocmds.createautocmd(opts) end,
+      "Global pattern (`pattern=\"*\"`) is incompatible with esqueleto.nvim"
+    )
+    is_true(#vim.api.nvim_get_autocmds({ group = "esqueleto" }) == 0) -- Check autocmds
+  end)
+
   it("should create autocmds", function()
     autocmds.createautocmd(opts)
 
@@ -69,25 +88,5 @@ describe("`createautocmd`", function()
       is_true(vim.tbl_contains(expected_patterns, cmd["pattern"], {}))
       is_true(vim.tbl_contains(expected_events, cmd["event"], {}))
     end
-  end)
-
-  it("should skip autocommand creation", function()
-    opts.patterns = "*"
-    autocmds.createautocmd(opts)
-    vim.print(opts)
-
-    -- Observed behaviour
-    local group_name = "esqueleto"
-    local existing_autocmds = vim.api.nvim_get_autocmds({
-      group = group_name,
-    })
-
-    -- Check if observed is expected
-    is_true(#existing_autocmds == 0)
-  end)
-
-  it("should should throw error for patterns found", function()
-    opts.patterns = {}
-    throws_error(autocmds.createautocmd(opts))
   end)
 end)
