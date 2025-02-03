@@ -1,4 +1,4 @@
-local utils = require("esqueleto.utils")
+local utils = require("esqueleto.core")
 
 local M = {}
 
@@ -18,6 +18,18 @@ M.createautocmd = function(opts)
     else
       opts.patterns = opts.patterns(opts.directories)
     end
+  end
+
+  -- Skip if (i) no patterns where found or (ii) trying to run always.
+  -- NOTE: This patterns are incompatible with the plugin in it's current state, since it
+  -- doesn't have a way to merge templates from different patterns.
+  if
+    type(opts.patterns) == "table" and next(opts.patterns --[[@as table]]) == nil
+  then
+    error("Empty pattern (`pattern={}`) is incompatible with esqueleto.nvim")
+  end
+  if opts.patterns == "*" then
+    error("Global pattern (`pattern=\"*\"`) is incompatible with esqueleto.nvim")
   end
 
   vim.api.nvim_create_autocmd({ "BufNewFile", "BufReadPost", "FileType" }, {
