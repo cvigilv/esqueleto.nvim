@@ -35,10 +35,13 @@ M.createautocmd = function(opts)
   vim.api.nvim_create_autocmd({ "BufNewFile", "BufReadPost", "FileType" }, {
     group = group,
     desc = "esqueleto.nvim :: Insert template",
-    pattern = opts.patterns,
+    pattern = opts.patterns --[[ @as string[] ]],
     callback = function()
-      if vim.bo.buftype == "nofile" then return nil end
       local filepath = vim.fn.expand("%")
+      if vim.bo.buftype == "nofile" then return nil end
+      for _, pattern in ipairs(opts.advanced.ignore_patterns) do
+        if filepath:match(pattern) then return nil end
+      end
       local emptyfile = vim.fn.getfsize(filepath) < 4
       if emptyfile then utils.inserttemplate(opts) end
     end,

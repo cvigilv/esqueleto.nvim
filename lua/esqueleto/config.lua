@@ -18,6 +18,7 @@ local utils = require("esqueleto.core")
 ---@class Esqueleto.AdvancedConfig
 ---@field ignored function|table<string> File patterns to ignore template insertion
 ---@field ignore_os_files boolean Ignore OS-specific files
+---@field ignore_patterns string[] Lua regex patterns to check foe ignoring template insertion
 
 ---@type Esqueleto.Config
 local defaults = {
@@ -53,6 +54,7 @@ local defaults = {
   advanced = {
     ignored = {},
     ignore_os_files = true,
+    ignore_patterns = { "^/tmp", ".bak$" },
   },
 }
 

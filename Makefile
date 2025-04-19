@@ -5,3 +5,6 @@ test:
 
 test_local:
 	nvim --headless -u scripts/minimal_init.lua -c "PlenaryBustedDirectory tests/ { minimal_init = './scripts/minimal_init.lua' }"
+
+instance:
+	nvim -u scripts/minimal_init.lua README

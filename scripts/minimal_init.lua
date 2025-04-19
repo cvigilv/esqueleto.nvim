@@ -33,4 +33,11 @@ function M.setup()
 end
 
 M.setup()
+require("esqueleto").setup(
+    {
+      autouse = false,
+      directories = { M.root() .. "scripts/skeletons" },
+      patterns = { "lua", "README" },
+    }
+)
 print("loaded minimal init.lua")
