@@ -1,5 +1,9 @@
 # esqueleto.nvim
 
+> [#note] I'm working on a rewrite of the plugin currently, since I have found better ways to do
+> some of the things here and since I'm aiming to provide an API for developing extensions for
+> esqueleto. The development version is on the `v2.0` branch, expect breaking changes.
+
 Reduce your boilerplate code the lazy-bones way.
 
 ## What is `esqueleto`?
