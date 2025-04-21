@@ -174,6 +174,58 @@ M.selecttemplate = function(templates, opts)
   end)
 end
 
+function M.builtin_finder(templates, opts)
+  local templatenames = vim.tbl_keys(templates)
+  vim.ui.select(templatenames, { prompt = "Select skeleton to use:" }, function(choice)
+    if templates[choice] then
+      M.writetemplate(vim.loop.fs_realpath(templates[choice]), opts)
+    else
+      vim.notify("[esqueleto] No template selected, leaving buffer empty", vim.log.levels.INFO)
+    end
+  end)
+end
+---@param templates {[string]:string}
+---@param opts table
+---@return nil
+function M.telescope_finder(templates, opts)
+  local telescope_exist, pickers = pcall(require, "telescope_pickers")
+  if not telescope_exist then
+    return vim.notify("[esqueleto] Telescope does not exist", vim.log.levels.WARN)
+  end
+  local finders = require("telescope.finders")
+  local actions = require("telescope.actions")
+  local action_state = require("telescope.actions.state")
+  local templatenames = {}
+  for key in pairs(templates) do
+    table.insert(templatenames, key)
+  end
+  pickers
+    .new({}, {
+      prompt_title = "Select skeleton to use",
+      previewer = _TelescopeConfigurationValues.file_previewer({}),
+      finder = finders.new_table({
+        results = templatenames,
+        entry_maker = function(entry)
+          return {
+            value = entry,
+            display = entry,
+            ordinal = entry,
+            filename = templates[entry],
+          }
+        end,
+      }),
+      sorter = _TelescopeConfigurationValues.generic_sorter({}),
+      attach_mappings = function(prompt_bufnr)
+        actions.select_default:replace(function()
+          actions.close(prompt_bufnr)
+          local selection = action_state.get_selected_entry()
+          M.writetemplate(vim.loop.fs_realpath(templates[selection.value]), opts)
+        end)
+        return true
+      end,
+    })
+    :find()
+end
 --- Insert template on current buffer
 ---@param opts Esqueleto.Config Plugin configuration table
 M.inserttemplate = function(opts)
