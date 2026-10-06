@@ -83,7 +83,7 @@ local getignorechecker = function(opts)
   local os_ignore_pats = opts.advanced.ignore_os_files
       and require("esqueleto.helpers.constants").ignored_os_patterns
     or {}
-  local extra = opts.advanced.ignored
+  local extra = opts.advanced.ignored_templates
   local extra_ignore_pats, extra_ignore_func = (function()
     if type(extra) == "function" then
       return {}, extra

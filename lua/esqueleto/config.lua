@@ -16,9 +16,9 @@ local utils = require("esqueleto.core")
 ---@field lookup table<string, function|string> Lookup table for wildcards
 
 ---@class Esqueleto.AdvancedConfig
----@field ignored function|table<string> File patterns to ignore template insertion
----@field ignore_os_files boolean Ignore OS-specific files
----@field ignore_patterns string[] Lua regex patterns to check foe ignoring template insertion
+---@field ignored_templates function|table<string> Glob patterns or predicate used to exclude template files
+---@field ignored_patterns string[] Lua patterns used to suppress automatic insertion by destination path
+---@field ignore_os_files boolean Ignore OS-specific template files
 
 ---@type Esqueleto.Config
 local defaults = {
@@ -52,13 +52,77 @@ local defaults = {
     },
   },
   advanced = {
-    ignored = {},
+    ignored_templates = {},
+    ignored_patterns = {},
     ignore_os_files = true,
-    ignore_patterns = { "^/tmp", ".bak$" },
   },
 }
 
 local M = {}
+
+local deprecated_advanced_options = {
+  { old = "ignored", new = "ignored_templates" },
+  { old = "ignore_patterns", new = "ignored_patterns" },
+}
+
+local migrate_deprecated_options = function(config)
+  config = vim.deepcopy(config or {})
+  if type(config.advanced) ~= "table" then return config end
+
+  for _, option in ipairs(deprecated_advanced_options) do
+    local old_name = option.old
+    local new_name = option.new
+    local old_value = config.advanced[old_name]
+    local new_value = config.advanced[new_name]
+
+    if old_value ~= nil and new_value ~= nil then
+      error(
+        string.format(
+          "`advanced.%s` and `advanced.%s` cannot be used together",
+          old_name,
+          new_name
+        ),
+        0
+      )
+    end
+
+    if old_value ~= nil then
+      vim.deprecate("advanced." .. old_name, "advanced." .. new_name, "2.0.0", "esqueleto.nvim")
+      config.advanced[new_name] = old_value
+      config.advanced[old_name] = nil
+    end
+  end
+
+  return config
+end
+
+local validate_string_list = function(name, values)
+  if not vim.islist(values) then error("`" .. name .. "` must be a list", 0) end
+
+  for index, value in ipairs(values) do
+    if type(value) ~= "string" then
+      error(string.format("`%s[%d]` must be a string", name, index), 0)
+    end
+  end
+end
+
+local validate_lua_patterns = function(patterns)
+  validate_string_list("advanced.ignored_patterns", patterns)
+
+  for index, pattern in ipairs(patterns) do
+    local valid, message = pcall(string.find, "", pattern)
+    if not valid then
+      error(
+        string.format(
+          "`advanced.ignored_patterns[%d]` is not a valid Lua pattern: %s",
+          index,
+          message
+        ),
+        0
+      )
+    end
+  end
+end
 
 --- Update default configuration table by merging with user's configuration table
 ---@param config Esqueleto.Config user configuration table
@@ -66,7 +130,8 @@ local M = {}
 M.update_config = function(config)
   vim.validate({ config = { config, "table", true } })
 
-  config = vim.tbl_deep_extend("force", defaults, config or {})
+  config = migrate_deprecated_options(config)
+  config = vim.tbl_deep_extend("force", defaults, config)
 
   -- Validate setup
   vim.validate({
@@ -77,9 +142,18 @@ M.update_config = function(config)
     ["wildcards.expand"] = { config.wildcards.expand, "boolean" },
     ["wildcards.lookup"] = { config.wildcards.lookup, "table" },
     ["advanced"] = { config.advanced, "table" },
-    ["advanced.ignored"] = { config.advanced.ignored, { "table", "function" } },
+    ["advanced.ignored_templates"] = {
+      config.advanced.ignored_templates,
+      { "table", "function" },
+    },
+    ["advanced.ignored_patterns"] = { config.advanced.ignored_patterns, "table" },
     ["advanced.ignore_os_files"] = { config.advanced.ignore_os_files, "boolean" },
   })
+
+  if type(config.advanced.ignored_templates) == "table" then
+    validate_string_list("advanced.ignored_templates", config.advanced.ignored_templates)
+  end
+  validate_lua_patterns(config.advanced.ignored_patterns)
 
   return config
 end

@@ -18,7 +18,8 @@ describe("`update_config`", function()
         lookup = true,
       },
       advanced = {
-        ignored = {},
+        ignored_templates = {},
+        ignored_patterns = {},
         ignore_os_files = true,
       },
     }
@@ -36,7 +37,7 @@ describe("`update_config`", function()
       directories = { vim.fn.stdpath("config") .. "/skeletons" },
       patterns = { "foo", "bar", "baz" },
       wildcards = { expand = false, lookup = { foo = "bar" } },
-      advanced = { ignored = {}, ignore_os_files = true },
+      advanced = { ignored_templates = {}, ignored_patterns = {}, ignore_os_files = true },
     }
 
     ---@diagnostic disable-next-line: missing-fields
