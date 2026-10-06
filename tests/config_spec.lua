@@ -1,9 +1,6 @@
 ---@diagnostic disable: undefined-global, lowercase-global, undefined-field
 
--- NOTE: refer to https://github.com/lunarmodules/luassert/tree/master for more info and examples
 local eq = assert.are.same
-local is_true = assert.is.True
-local throws_error = assert.has_error
 
 describe("`update_config`", function()
   before_each(function() config = require("esqueleto.config") end)
@@ -20,6 +17,7 @@ describe("`update_config`", function()
       advanced = {
         ignored = {},
         ignore_os_files = true,
+        ignore_patterns = { "^/tmp", ".bak$" },
       },
     }
 
@@ -36,7 +34,7 @@ describe("`update_config`", function()
       directories = { vim.fn.stdpath("config") .. "/skeletons" },
       patterns = { "foo", "bar", "baz" },
       wildcards = { expand = false, lookup = { foo = "bar" } },
-      advanced = { ignored = {}, ignore_os_files = true },
+      advanced = { ignored = {}, ignore_patterns = { "^/tmp", ".bak$" }, ignore_os_files = true },
     }
 
     ---@diagnostic disable-next-line: missing-fields

@@ -1,3 +1,7 @@
+---@module "esqueleto.core"
+---@author Carlos Vigil-Vásquez
+---@license MIT
+
 local wildcards = require("esqueleto.helpers.wildcards")
 
 local M = {}
@@ -176,33 +180,12 @@ end
 
 --- Insert template on current buffer
 ---@param opts Esqueleto.Config Plugin configuration table
-M.inserttemplate = function(opts)
-  -- Get pattern alternatives for current file
-  local filepath = vim.fn.expand("%:p")
-  local filename = vim.fn.expand("%:t")
-  local filetype = vim.bo.filetype
-
+M.inserttemplate = function(filepath, pattern, opts)
   -- Identify if pattern matches user configuration
-  local pattern
-  if not _G.esqueleto_inserted[filepath] then
-    -- match either filename or extension. Filename has priority
-    if
-      vim.tbl_contains(opts.patterns --[[@as table]], filename)
-    then
-      pattern = filename
-    elseif
-      vim.tbl_contains(opts.patterns --[[@as table]], filetype)
-    then
-      pattern = filetype
-    end
+  local templates = M.gettemplates(pattern, opts)
 
-    -- Get templates for selected pattern
-    local templates = M.gettemplates(pattern, opts)
-
-    -- Pop-up selection UI
-    M.selecttemplate(templates, opts)
-    _G.esqueleto_inserted[filepath] = true
-  end
+  -- Pop-up selection UI
+  M.selecttemplate(templates, opts)
 end
 
 return M

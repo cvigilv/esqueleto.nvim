@@ -18,7 +18,7 @@ local utils = require("esqueleto.core")
 ---@class Esqueleto.AdvancedConfig
 ---@field ignored function|table<string> File patterns to ignore template insertion
 ---@field ignore_os_files boolean Ignore OS-specific files
----@field ignore_patterns string[] Lua regex patterns to check foe ignoring template insertion
+---@field ignore_patterns string[] Lua regex patterns to check for ignoring template insertion
 
 ---@type Esqueleto.Config
 local defaults = {
@@ -78,6 +78,7 @@ M.update_config = function(config)
     ["wildcards.lookup"] = { config.wildcards.lookup, "table" },
     ["advanced"] = { config.advanced, "table" },
     ["advanced.ignored"] = { config.advanced.ignored, { "table", "function" } },
+    ["advanced.ignore_patterns"] = { config.advanced.ignore_patterns, "table" },
     ["advanced.ignore_os_files"] = { config.advanced.ignore_os_files, "boolean" },
   })
 

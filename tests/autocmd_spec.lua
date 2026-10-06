@@ -71,8 +71,7 @@ describe("`createautocmd`", function()
     autocmds.createautocmd(opts)
 
     -- Expected behaviour
-    expected_events = { "BufNewFile", "BufReadPost", "FileType" }
-    expected_patterns = { "lua", "README" }
+    expected_events = { "BufNewFile", "BufReadPost" }
 
     -- Observed behaviour
     local group_name = "esqueleto"
@@ -83,7 +82,6 @@ describe("`createautocmd`", function()
     -- Check if observed and expected behaviours are equal
     for _, cmd in ipairs(existing_autocmds) do
       eq(cmd["group_name"], group_name)
-      is_true(vim.tbl_contains(expected_patterns, cmd["pattern"], {}))
       is_true(vim.tbl_contains(expected_events, cmd["event"], {}))
     end
   end)

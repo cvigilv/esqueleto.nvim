@@ -1,3 +1,7 @@
+---@module "esqueleto.init"
+---@author Carlos Vigil-Vásquez
+---@license MIT
+
 _G.esqueleto_inserted = {}
 
 local M = {}

@@ -1,3 +1,7 @@
+---@module "esqueleto.excmd"
+---@author Carlos Vigil-Vásquez
+---@license MIT
+
 local M = {}
 
 local utils = require("esqueleto.core")

@@ -50,25 +50,27 @@ M.writetemplate = function(file, opts)
   -- Read the file, convert EOL to LF and remove the new line at EOF
   local content = handler:read("*a"):gsub("\r\n?", "\n"):gsub("\n$", "")
 
-  local lines, cursor_pos
+  local lines --, cursor_pos
   if opts.wildcards.expand then
     -- Place the contents of the file with the wildcards expanded
-    lines, cursor_pos = wildcards.parse(content, opts.wildcards.lookup)
+    lines = wildcards.parse(content, opts.wildcards.lookup)
   else
     -- ... or place them directly
     lines = vim.split(content, "\n", { plain = true })
   end
 
   -- Replace the buffer with the given lines
-  vim.api.nvim_buf_set_lines(0, 0, -1, true, lines)
+  vim.print(table.concat(lines, "\n"))
+  vim.snippet.expand(table.concat(lines, "\n"))
+  -- vim.api.nvim_buf_set_lines(0, 0, -1, true, lines)
 
-  if cursor_pos ~= nil then
-    -- If a cursor wildcard was found, place the cursor there
-    vim.api.nvim_win_set_cursor(0, cursor_pos)
-  else
-    -- If not, move the cursor to the last line
-    vim.cmd("norm! G")
-  end
+  -- if cursor_pos ~= nil then
+  --   -- If a cursor wildcard was found, place the cursor there
+  --   vim.api.nvim_win_set_cursor(0, cursor_pos)
+  -- else
+  --   -- If not, move the cursor to the last line
+  --   vim.cmd("norm! G")
+  -- end
 end
 
 -- List ignored files under a directory, given a list of glob patterns

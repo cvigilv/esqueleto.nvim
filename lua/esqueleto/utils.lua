@@ -1,4 +1,8 @@
-local wildcards = require("esqueleto.helpers.wildcards"
+---@module "esqueleto.utils"
+---@author Carlos Vigil-Vásquez
+---@license MIT
+
+local wildcards = require("esqueleto.helpers.wildcards")
 
 local M = {}
 

@@ -4,7 +4,7 @@ local M = {}
 ---@param str string String to parse
 ---@param lookup table Wildcards lookup table
 ---@return table parsed_str Table containing all lines with wildcards expanded table
----@return table cursor_pos Row-column position tuple of the last cursor wildcard found.
+----@return table cursor_pos Row-column position tuple of the last cursor wildcard found.
 M.parse = function(str, lookup)
   local parsedstr = {}
   for _, l in ipairs(vim.split(str, "\n", { plain = true })) do
@@ -27,14 +27,16 @@ M.parse = function(str, lookup)
   end
 
   -- Find cursor wildcard
-  local cursor_pos = nil
+  local cursor_count = 0
   for row, l in ipairs(parsedstr) do
     local col, _ = string.find(l, "${cursor}")
-    if col ~= nil then cursor_pos = { row, col } end
-    parsedstr[row] = parsedstr[row]:gsub("${cursor}", "")
+    if col ~= nil then
+      parsedstr[row] = parsedstr[row]:gsub("${cursor}", "$" .. cursor_count)
+      cursor_count = cursor_count + 1
+    end
   end
 
-  return parsedstr, cursor_pos
+  return parsedstr
 end
 
 return M
