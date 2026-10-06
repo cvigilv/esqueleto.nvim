@@ -76,6 +76,8 @@ local listignored = function(dir, ignored_patterns)
   return vim
     .iter(ignored_patterns)
     :map(function(patterns) return vim.fn.globpath(dir, patterns, true, true, true) end)
+    :flatten()
+    :totable()
 end
 
 -- Returns a ignore checker
