@@ -39,7 +39,8 @@ describe("`createautocmd`", function()
         },
       },
       advanced = {
-        ignored = {},
+        ignored_templates = {},
+        ignored_patterns = {},
         ignore_os_files = true,
       },
     }
