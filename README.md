@@ -163,8 +163,9 @@ The default options of `esqueleto` are the following:
 ---@field lookup table<string, function|string> Lookup table for wildcards
 
 ---@class Esqueleto.AdvancedConfig
----@field ignored function|table<string> File patterns to ignore template insertion
----@field ignore_os_files boolean Ignore OS-specific files
+---@field ignored_templates function|table<string> Glob patterns or predicate used to exclude template files
+---@field ignored_patterns string[] Lua patterns used to suppress automatic insertion by destination path
+---@field ignore_os_files boolean Ignore OS-specific template files
 
 ---@type Esqueleto.Config
 {
@@ -204,13 +205,50 @@ The default options of `esqueleto` are the following:
   },
 
   -- Advanced options
-  ---@type Esqueleto.AdvancesConfig
+  ---@type Esqueleto.AdvancedConfig
   advanced = {
-    ignored = {}, -- List of glob patterns or function that determines if a file is ignored
-    ignore_os_files = true, -- whether to ignore OS files (e.g. .DS_Store)
+    ignored_templates = {}, -- glob patterns or predicate for excluding template files
+    ignored_patterns = {}, -- Lua patterns for destination paths that skip automatic insertion
+    ignore_os_files = true, -- whether to ignore OS template files (e.g. .DS_Store)
   }
 }
 ```
+
+### Ignoring templates and destination files
+
+The two ignore options act at different stages:
+
+- `advanced.ignored_templates` filters files from the template chooser. It accepts glob
+  patterns such as `"*.bak"`, or a predicate that receives the template directory path.
+- `advanced.ignored_patterns` prevents automatic insertion when a Lua pattern matches the
+  normalized absolute path of the destination buffer. `:EsqueletoInsert` remains an explicit
+  override.
+
+On macOS, Neovim may report existing `/var/...` and `/tmp/...` paths as
+`/private/var/...` and `/private/tmp/...`. The plugin does not translate between these aliases,
+so include both forms when both should be ignored.
+
+Lua patterns are not shell globs or regular expressions. Escape a literal dot with `%`, as in
+`"Luapad%.lua$"`. Use `vim.pesc()` for a full path that should be matched literally. Anchored
+absolute-path rules can be configured as follows:
+
+```lua
+advanced = {
+  ignored_templates = { "*.bak" },
+  ignored_patterns = {
+    "^/tmp/",
+    "^/private/tmp/",
+    "^/var/",
+    "^/private/var/",
+    "Luapad%.lua$",
+    vim.pesc("/home/user/project with spaces/"),
+  },
+}
+```
+
+`advanced.ignored` and `advanced.ignore_patterns` are deprecated aliases for
+`advanced.ignored_templates` and `advanced.ignored_patterns`, respectively. They will be
+removed in version 2.0.0. Supplying an old and new name together is an error.
 
 For more information regarding `esqueleto.nvim` options, refer to docs (`:h esqueleto`).
 

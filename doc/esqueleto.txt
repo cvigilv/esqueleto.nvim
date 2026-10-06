@@ -57,8 +57,9 @@ First, |esqueleto| setup in the `init.lua` file is as follows: >
 
           -- Advanced options
           advanced = {
+              ignored_templates = {},
+              ignored_patterns = {},
               ignore_os_files = true,
-              ignore = {}
           },
     })
 <
@@ -150,7 +151,11 @@ setup({config})
               ["gh-user"] = function() return utils.capture("git config user.name", false) end,
             },
           },
-          advanced = { ignored = {}, ignore_os_files = true },
+          advanced = {
+            ignored_templates = {},
+            ignored_patterns = {},
+            ignore_os_files = true,
+          },
         }
 <
 
@@ -166,14 +171,41 @@ setup({config})
                                         wild-cards.
                     • {lookup}          (table) Wild-cards look-up table.
       • {advanced}    (table) Advanced options, including:
-                    • {ignore}          (table|function) List of glob patterns of
-                                        files to be ignored; alternatively, a
-                                        predicate that determines if a file
-                                        should be ignored, given its full filepath.
-                    • {ignore_os_files} (boolean) Whether to ignore OS files,
-                                        such as `.DS_Store`, `Desktop.ini`.
-                                        For an exhaustive list, see
-                                        `https://www.toptal.com/developers/gitignore/api/windows,macos,linux`
+                    • {ignored_templates} (table|function) Glob patterns for
+                                          template files excluded from the
+                                          chooser, or a predicate receiving the
+                                          template directory path.
+                    • {ignored_patterns}  (table) Lua patterns matched against
+                                          normalized absolute destination paths.
+                                          Matches suppress automatic insertion;
+                                          `:EsqueletoInsert` remains available.
+                    • {ignore_os_files}   (boolean) Whether to ignore OS template
+                                          files, such as `.DS_Store` and
+                                          `Desktop.ini`.
+
+    On macOS, Neovim may report existing `/var/...` and `/tmp/...` paths as
+    `/private/var/...` and `/private/tmp/...`. The plugin does not translate
+    between these aliases, so include both forms when both should be ignored.
+
+    Lua patterns are not shell globs or regular expressions. Escape literal
+    pattern characters where needed, or use `vim.pesc()` for a literal path.
+    For example: >
+        advanced = {
+          ignored_templates = { "*.bak" },
+          ignored_patterns = {
+            "^/tmp/",
+            "^/private/tmp/",
+            "^/var/",
+            "^/private/var/",
+            "Luapad%.lua$",
+            vim.pesc("/home/user/project with spaces/"),
+          },
+        }
+<
+    `advanced.ignored` is deprecated in favor of `advanced.ignored_templates`.
+    `advanced.ignore_patterns` is deprecated in favor of
+    `advanced.ignored_patterns`. Both aliases will be removed in version 2.0.0.
+    Supplying an old and new name together is an error.
 
 ==============================================================================
                                                                  *ex-commands*
@@ -190,5 +222,12 @@ EsqueletoNew
 
 ==============================================================================
                                                                    *changelog*
+
+Deprecations ~
+
+- `advanced.ignored` has been renamed to `advanced.ignored_templates`.
+- `advanced.ignore_patterns` has been renamed to `advanced.ignored_patterns`.
+
+Both deprecated aliases will be removed in version 2.0.0.
 
 vim:tw=78:ts=8:et:sw=4:ft=help:norl:
