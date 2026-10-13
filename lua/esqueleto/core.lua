@@ -165,14 +165,30 @@ M.selecttemplate = function(templates, opts)
     return nil
   end
 
-  -- Select template
-  vim.ui.select(templatenames, { prompt = "Select skeleton to use:" }, function(choice)
-    if templates[choice] then
-      ---@diagnostic disable-next-line: undefined-field
-      M.writetemplate(vim.loop.fs_realpath(templates[choice]), opts)
-    else
-      vim.notify("[esqueleto] No template selected, leaving buffer empty", vim.log.levels.INFO)
-    end
+  -- Select template. The picker opens on the next event-loop iteration because this
+  -- function can run inside filetype detection's `vim._with` context, which restores the
+  -- previous window on return and would take focus away from an asynchronous picker.
+  -- The template is written to `bufnr` regardless of which buffer is current when the
+  -- choice arrives.
+  local bufnr = vim.api.nvim_get_current_buf()
+  vim.schedule(function()
+    vim.ui.select(templatenames, { prompt = "Select skeleton to use:" }, function(choice)
+      if not templates[choice] then
+        vim.notify("[esqueleto] No template selected, leaving buffer empty", vim.log.levels.INFO)
+        return
+      end
+      if not vim.api.nvim_buf_is_valid(bufnr) then
+        vim.notify(
+          "[esqueleto] Target buffer was closed before a template was selected",
+          vim.log.levels.WARN
+        )
+        return
+      end
+      vim.api.nvim_buf_call(bufnr, function()
+        ---@diagnostic disable-next-line: undefined-field
+        M.writetemplate(vim.loop.fs_realpath(templates[choice]), opts)
+      end)
+    end)
   end)
 end
 
